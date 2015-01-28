@@ -3,3 +3,6 @@
 
 # Ignore test data files
 test_data/*
+
+# Ignoring published html
+matlab/html/*
