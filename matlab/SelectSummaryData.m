@@ -71,13 +71,17 @@ function [ properties ] = SelectSummaryData( summary_data )
     end
 
     function add_property(parent, child)
-        fprintf('Adding %s:%s\n', parent, child);
         properties.(parent).(child) = summary_data.(parent).(child)
+        fprintf('Added %s:%s\n', parent, child);
         return;
     end
 
     function remove_property(parent, child)
-        fprintf('Removing %s:%s\n', parent, child)
+        properties.(parent) = rmfield(properties.(parent), child);
+        if length(fieldnames(properties.(parent))) == 0
+            properties = rmfield(properties, parent);
+        end
+        fprintf('Removed %s:%s\n', parent, child)
         return;
     end
 

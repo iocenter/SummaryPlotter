@@ -24,7 +24,7 @@ end
 
 %% Select Data To Be Plotted
 % Ask the user to select which of the available summary vectors to plot.
-properties_to_be_plotted = SelectSummaryData(summary_data)
+properties_to_be_plotted = SelectSummaryData(summary_data);
 
 %% Create Plot
 % Create the plot. It will initially be hidden.
