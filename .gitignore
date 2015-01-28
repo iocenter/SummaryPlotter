@@ -1,2 +1,5 @@
 # Ignore tmp files
 *\~
+
+# Ignore test data files
+test_data/*
