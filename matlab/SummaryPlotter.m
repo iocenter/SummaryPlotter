@@ -30,3 +30,5 @@ properties_to_be_plotted = SelectSummaryData(summary_data);
 % Create the plot. It will initially be hidden.
 % Ask the user if the plot is to be shown, printed to PDF or stored
 % as CSV values.
+fh = CreatePlot(properties_to_be_plotted);
+shg; % Show the plot
