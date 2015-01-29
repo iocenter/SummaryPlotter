@@ -26,9 +26,17 @@ end
 % Ask the user to select which of the available summary vectors to plot.
 properties_to_be_plotted = SelectSummaryData(summary_data);
 
+%% Select Plot Creation Mode
+% Ask the user whether to use Automatic Batch Mode or Custom Mode.
+% Automatic Batch Mode creates all commonly used plots with predefined
+% settings.
+% Custom Mode allows the user to create a single plot with customized
+% data and settings.
+
+
 %% Create Plot
 % Create the plot. It will initially be hidden.
 % Ask the user if the plot is to be shown, printed to PDF or stored
 % as CSV values.
-fh = CreatePlot(properties_to_be_plotted);
+fh = CreateCustomPlot(properties_to_be_plotted);
 shg; % Show the plot

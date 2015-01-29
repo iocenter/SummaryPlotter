@@ -8,11 +8,15 @@ function [ figure_handle ] = CreatePlot( properties )
     fig_width = 900; fig_height = 500;
     x_pos = 50; y_pos = 50;
     
+    % Axes size and position variables
+    axes_width = fig_width - 200; axes_height = fig_height - 50;
+    x_pos_axes = 50; y_pos_axes = 40;
+    
     % Create figure and axes
     figure_handle = figure('Visible', 'off', ...
         'Position',[x_pos,y_pos,fig_width,fig_height]);
     axes_handle =  axes('Units', 'pixels', ...
-        'Position', [50,40,fig_width-200, fig_height-50]);
+        'Position', [x_pos_axes,y_pos_axes,axes_width, axes_height]);
     
     % Plot the data
     hold on;
@@ -23,7 +27,7 @@ function [ figure_handle ] = CreatePlot( properties )
     for i = 1:length(root_labels)
         root_label = root_labels{i};
         for j = 1:length(leaf_labels.(root_label))
-            leaf_label = leaf_labels.(root_label){j}'
+            leaf_label = leaf_labels.(root_label){j};
             plot(properties.(root_label).(leaf_label), colors(line_nr));
             legend_strings{line_nr} = leaf_label;
             line_nr = line_nr + 1;
@@ -50,15 +54,7 @@ function [ figure_handle ] = CreatePlot( properties )
         'String', 'Save as PDF', ...
         'Position', [btn_x, 175, btn_width, btn_height], ...
         'Callback', @savepdfbutton_callback);
-    
-    % Button used to save the plotted data to a csv file
-    uicontrol(figure_handle, 'Style', 'pushbutton', ...
-        'String', 'Save to CSV', ...
-        'Position', [btn_x, 150, btn_width, btn_height], ...
-        'Callback', @savecsvbutton_callback);
 
-    shg; % SHOW FIGURE
-    
     % Wait for the figure to be closed before returning from function
     waitfor(figure_handle);
     
@@ -69,11 +65,24 @@ function [ figure_handle ] = CreatePlot( properties )
     end
 
     function savepdfbutton_callback(source, eventdata, handles)
-        fprintf('Clicked Save PDF button.\n');
-    end
-
-    function savecsvbutton_callback(source, eventdata, handles)
-        fprintf('Clicked Save CSV button.\n');
+        % Get path and name to save to
+        [file_name, path_name] = uiputfile('*.pdf', 'Save plot as PDF');
+        file_path = strcat(path_name, file_name);
+        
+        % Copy axes into new figure
+        pdf_figure = figure('Visible', 'off', ...
+            'Units', 'centimeters', ...
+            'Position', [2,2,12,10]);
+        copyobj(axes_handle, pdf_figure);
+        
+        % Set paper properties
+        set(pdf_figure, ...
+            'PaperUnits', 'centimeters', ...
+            'PaperPosition', [0, 0, 25, 16], ...
+            'PaperSize', [24, 16]);
+        
+        % Save figure as PDF
+        saveas(pdf_figure, file_path);
     end
 
 end

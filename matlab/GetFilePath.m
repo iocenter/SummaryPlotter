@@ -18,7 +18,8 @@ function [ file_path, folder_path, file_name, name, ext ] = GetFilePath()
 
 fprintf('file_path has not been provided as a parameter.\n');
 fprintf('Select a summary file.\n');
-[file_name, folder_path, filter_index] = uigetfile;
+[file_name, folder_path, filter_index] = uigetfile( ...
+    {'*.mat';'*.UNSMRY'},'Select summary file');
 C = strsplit(file_name, '.');
 name = C{1};
 ext = C{2};
