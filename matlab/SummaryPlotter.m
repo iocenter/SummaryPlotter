@@ -22,21 +22,19 @@ else
     fprintf('are .mat, .UNSMRY and .HDF5\');
 end
 
-%% Select Data To Be Plotted
-% Ask the user to select which of the available summary vectors to plot.
-properties_to_be_plotted = SelectSummaryData(summary_data);
-
 %% Select Plot Creation Mode
 % Ask the user whether to use Automatic Batch Mode or Custom Mode.
 % Automatic Batch Mode creates all commonly used plots with predefined
 % settings.
 % Custom Mode allows the user to create a single plot with customized
 % data and settings.
-
-
-%% Create Plot
-% Create the plot. It will initially be hidden.
-% Ask the user if the plot is to be shown, printed to PDF or stored
-% as CSV values.
-fh = CreateCustomPlot(properties_to_be_plotted);
-shg; % Show the plot
+mode = questdlg('qstring','Select Plot Creaton Mode', ...
+    'Batch','Custom', 'Batch');
+switch mode
+    case 'Batch'
+        CreateBatchPlots(summary_data);
+    case 'Custom'
+        properties_to_be_plotted = SelectSummaryData(summary_data);
+        fh = CreateCustomPlot(properties_to_be_plotted);
+        shg; % Show the plot
+end
