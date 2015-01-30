@@ -1,8 +1,8 @@
 %% SummaryPlotter
 % Plot summary data from the ECLIPSE and ADGPRS reservoir simulators.
 % Allows you to save the plots as PDF documents or export the data
-% to a CSV format readable by Excel, Pgfplots (a LaTeX plotting package)
-% etc.
+% to a CSV format readable by Excel, Pgfplots (a LaTeX plotting 
+% package), etc.
 clear all; close all; clc;
 
 %% Get Path To Summary Data File
@@ -17,8 +17,34 @@ clear all; close all; clc;
 if strcmp(ext, 'mat')
     fprintf('Reading saved matlab variable (*.mat).\n');
     summary_data = load(summary_file_path);
+    
+elseif strcmp(ext, 'UNSMRY')
+    
+    fprintf([ 'Using MRST libraries to read '...
+        'Eclipse summary file (*.UNSMRY).\n' ]);
+    
+    if 1 % exist('readEclipseOutputFileUnFmt', 'file') == 0
+    
+        fprintf('Path to MRST libraries not found.\n');
+        
+        [ mrst_file_path, mrst_folder_path, ~, ~, ~ ] = ...
+        GetMRSTPath();
+    
+        fprintf('MRST libraries found in: %s\n', mrst_folder_path);
+        
+        run(mrst_file_path);
+        
+        fprintf('Adding ad-fi and deckformat modules...\n');
+        
+        mrstModule add ad-fi deckformat
+        
+    end
+    
+    summary_data = ReadEclipseSummary(name);    
+
 else
-    fprintf('File extension/format not reconized. The allowed extensions')
+    fprintf([ 'File extension/format not '...
+        'reconized. The allowed extensions' ])
     fprintf('are .mat, .UNSMRY and .HDF5\');
 end
 
@@ -38,3 +64,5 @@ switch mode
         fh = CreateCustomPlot(properties_to_be_plotted);
         shg; % Show the plot
 end
+
+
