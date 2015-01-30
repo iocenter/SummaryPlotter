@@ -1,6 +1,7 @@
-function CreatePlot( pd, folder, index )
+function CreatePlot( pd, folder, index, lims )
 %CREATEPLOT Creates a plot from a PlotData object
 %   The plot is saved in the input folder
+%   pd must be a PlotData object.
 
 properties = PlotProperties(); % Get properties struct
 cm = ColorMapper();
@@ -22,7 +23,8 @@ for i=1:pd.ysets
 end
 
 lh = legend(pd.ynames);
-ApplyPlotSettings(fh, ah, th, xlh, ylh, lh);
+lims.xmin = min(pd.xdata); lims.xmax = max(pd.xdata);
+ApplyPlotSettings(fh, ah, th, xlh, ylh, lh, lims);
 
 file_path = strcat(folder, '/', ... Folder path
                    num2str(index), '_', regexprep(lower(pd.title), ' ', '_'), ... File name
