@@ -1,4 +1,4 @@
-function [] = ApplyPlotSettings( fh, ah, th, xlh, ylh )
+function [] = ApplyPlotSettings( fh, ah, th, xlh, ylh, lh )
 %APPLYPLOTSETTINGS Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -23,6 +23,10 @@ set(xlh, 'FontSize', properties.font.labels.FontSize, ...
          'FontWeight', properties.font.labels.FontWeight);
 set(ylh, 'FontSize', properties.font.labels.FontSize, ...
          'FontWeight', properties.font.labels.FontWeight);
+
+     
+% Legend settings =========================================================
+set(lh, 'FontSize', properties.font.legend.FontSize);
 
 end
 
