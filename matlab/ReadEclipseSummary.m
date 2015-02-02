@@ -21,7 +21,15 @@ function [ output_data ] = ReadEclipseSummary( name )
 %
 %   Input is the Eclipse file name without extension
 %   Outputs matlab structure variable: output_data
+% 
+% Reload Eclipse test data:
+% cd ~/WORK-3/D-WRKS-A/WplcOpt_PSO_MJ/models\
+% /60x60_CGpaper_5_well_model/eclipse
+% cp *.EGRID *.INIT *.RSSPEC *.SMSPEC *.UNRST *.UNSMRY\
+%  /home/bellout/git/SummaryPlotter/test_data
 
+
+%%
 % ========================================================
 % Read Eclipse output data using MRST functions
 
@@ -30,31 +38,39 @@ function [ output_data ] = ReadEclipseSummary( name )
 init = readEclipseOutputFileUnFmt([name '.INIT']);
 grd  = readEclipseOutputFileUnFmt([name '.EGRID']);
 
+debug_output = true;
+
+%%
 % ========================================================
-% Reorganize into structure variable (FIELD VOLUMES)
+% Reorganize into structure variable (VOLUMES)
 
 % --------------------------------------------------------
 % For debugging purposes:
 frmt = repmat([ repmat('%10.20s \t', 1, 4) '\n' ], 1, 12);
-fprintf(['CURRENT KEYWORDS:\n' frmt '\n\n' ], smry.KEYWORDS{:});
+fprintf(['CURRENT KEYWORDS:\n' frmt '\n\n' ], ...
+    smry.KEYWORDS{:});
 
 % --------------------------------------------------------
 % Read these field volume keywords
-nm  = 'FIELD';
-kwd = {'FGIP' 'FGIPG' 'FGIPL' 'FOIP' 'FOIPG' 'FOIPL' 'FOIP' 'FWIP'};
+volume_name  = 'VOLUMES';
+volume_keywords = {'FGIP'  'FGIPG' 'FGIPL' 'FOIP' ...
+                   'FOIPG' 'FOIPL' 'FWIP'};
 
-for key = 1 : length(kwd)
+for key_num = 1 : length(volume_keywords)
     
-    indx = strcmp(smry.KEYWORDS, kwd{key});
+    key_index = strcmp(smry.KEYWORDS, volume_keywords{key_num});
     
-    if any(indx)
+    if any(key_index)
         
-        vals = smry.get(nm,smry.KEYWORDS{indx},:);
-        evalIn = ['VOLUMES.' kwd{key} ' = vals;'];
+        keyword  = smry.KEYWORDS{ key_index };
+        keyspace = smry.getNms(keyword);
+        
+        vals = smry.get(keyspace, keyword,:);
+        evalIn = [volume_name '.' volume_keywords{key_num} ' = vals;'];
         
     else
         
-        evalIn = ['VOLUMES.' kwd{key} ' = 0;'];
+        evalIn = [volume_name '.' volume_keywords{key_num} ' = 0;'];
     
     end
     
@@ -64,109 +80,164 @@ end
 
 % --------------------------------------------------------
 % For debugging purposes:
-fprintf('FGIP  = %9.3E : GAS INITIALLY IN PLACE\n', max(VOLUMES.FGIP));
-fprintf('FGIPG = %9.3E : GAS INITIALLY IN PLACE, GAS PHASE\n', max(VOLUMES.FGIPG));
-fprintf('FGIPL = %9.3E : GAS INITIALLY IN PLACE, LIQUID PHASE\n', max(VOLUMES.FGIPL));
-fprintf('FOIP  = %9.3E : OIL INITIALLY IN PLACE\n', max(VOLUMES.FOIP));
-fprintf('FOIPG = %9.3E : OIL INITIALLY IN PLACE, GAS PHASE\n', max(VOLUMES.FOIPG));
-fprintf('FOIPL = %9.3E : OIL INITIALLY IN PLACE, LIQUID PHASE\n', max(VOLUMES.FOIPL));
-fprintf('FWIP  = %9.3E : WATER INITIALLY IN PLACE\n', max(VOLUMES.FWIP));
+if debug_output
+fprintf('\n\n')
+fprintf('FGIP  = %9.3E : GAS INIT IN PLACE\n', ...
+    max(VOLUMES.FGIP));
+fprintf('FGIPG = %9.3E : GAS INIT IN PLACE (GAS PHASE)\n', ...
+    max(VOLUMES.FGIPG));
+fprintf('FGIPL = %9.3E : GAS INIT IN PLACE (LIQUID PHASE)\n', ...
+    max(VOLUMES.FGIPL));
+fprintf('FOIP  = %9.3E : OIL INIT IN PLACE\n', ...
+    max(VOLUMES.FOIP));
+fprintf('FOIPG = %9.3E : OIL INIT IN PLACE (GAS PHASE)\n', ...
+    max(VOLUMES.FOIPG));
+fprintf('FOIPL = %9.3E : OIL INIT IN PLACE (LIQUID PHASE)\n', ...
+    max(VOLUMES.FOIPL));
+fprintf('FWIP  = %9.3E : WATER INITIALLY IN PLACE\n', ...
+    max(VOLUMES.FWIP));
+end
 
+%%
 % ========================================================
-% Reorganize into structure variable (FIELD PRODUCTION)
+% Reorganize into structure variable (FIELD)
 
 % --------------------------------------------------------
 % Read field production keywords
-nm  = 'FIELD';
-kwd = {'TIME' 'FPR'  'FGPR' 'FOPR' 'FWPR' ...
-       'FLPR' 'FGPT' 'FOPT' 'FWPT' 'FLPT'};
+field_name = 'FIELD';
+field_keywords = {...
+    'TIME' 'FPR'  'FGPR' 'FOPR' 'FWPR' ...
+    'FLPR' 'FGPT' 'FOPT' 'FWPT' 'FLPT' ...
+    'FOE' };
 
-for key = 1 : length(kwd)
+for key_num = 1 : length(field_keywords)
     
-    % Debug:
-    % fprintf('%s ... ', kwd{key});
+    if debug_output
+    fprintf('READING %s ... ', field_keywords{key_num});
+    end
     
-    indx = strcmp(smry.KEYWORDS, kwd{key});
+    key_index = strcmp(smry.KEYWORDS, field_keywords{key_num});
     
-    if any(indx)
+    if any(key_index)
         
-        vals = smry.get(nm,smry.KEYWORDS{indx},:);
-        evalIn = ['FIELD.' kwd{key} ' = vals;'];
+        keyword  = smry.KEYWORDS{ key_index };
+        keyspace = smry.getNms(keyword);
+       
+        if debug_output
+        fprintf('(%s/%s) ... ', keyword, keyspace{1});
+        end
+    
+        vals = smry.get(keyspace, keyword,:);
+        evalIn = [ field_name '.' field_keywords{key_num} ' = vals;' ];
     
     else
     
-        evalIn = ['FIELD.' kwd{key} ' = 0;'];
+        % MSG
+        fprintf('KYWRD NOT FOUND');         
+        evalIn = [ field_name '.' field_keywords{key_num} ' = 0;' ];
         
     end
     
     eval( evalIn );
     
-    if strcmp(kwd{ key }, 'FPR')
+    if strcmp(field_keywords{ key_num }, 'FPR')
         
-        evalIn = 'FIELD.FPRH = vals;';
+        evalIn = [ field_name '.FPRH = vals;' ];
         eval( evalIn );
         
     end
     
-    if rem(key, 10) == 0
+    fprintf('\n');
+    
+    if rem(key_num, 10) == 0
         
         fprintf('\n');
         
     end
+
 end
 
 % ========================================================
-% Reorganize into structure variable (WELL PRODUCTION)
-
+% Reorganize into structure variable (WELL)
+%%
 % --------------------------------------------------------
 % Read well production keywords   
-wns = or(strncmp(smry.WGNAMES,'I',1), strncmp(smry.WGNAMES,'P',1));
-WELL.WNMS = smry.WGNAMES(wns);
+well_names = or(strncmp(smry.WGNAMES,'I',1), ...
+                strncmp(smry.WGNAMES,'P',1));
+WELLS.WNMS = smry.WGNAMES(well_names);
 
-kwd = {'TIME' 'TIMESTEP' 'WGPR' 'WOPR' 'WWPR' 'WLPR' ... 
-       'WBHP' 'WTHP'     'WGPT' 'WOPT' 'WWPT' 'WLPT' ...
-       'WWCT'};
+well_keywords = { ...
+    'TIME' 'TIMESTEP' 'WGPR' 'WOPR' 'WWPR' 'WLPR' ...
+    'WBHP' 'WTHP'     'WGPT' 'WOPT' 'WWPT' 'WLPT' ...
+    'WWCT'};
 
-for iwell = 1 : 4
+valsz = size(smry.get(smry.getNms('TIME'),'TIME',:)'); %#ok<*NASGU>
+
+for iwell = 1 : size(WELLS.WNMS, 1)
     
-    nm  = WELL.WNMS{iwell};
+    well_name  = WELLS.WNMS{ iwell };
     
-    fprintf('WELL NUM %d, WELL NAME ... %s \n', iwell, nm);        
+    fprintf('\nWELL NUM %d, WELL NAME: %s \n', iwell, well_name);
+    fprintf('============================\n')
 
-    for key = 1 : length( kwd )
+    for key_num = 1 : length( well_keywords )
         
-        if key == 1
-            
-            fprintf('%s ... \n', kwd{ key });        
-            tn = smry.getNms('TIME');
-            WELLS.TIME = smry.get(tn( 1 ),'TIME',:)';
-            
-        elseif key == 2
+        key_index = strcmp(smry.KEYWORDS, well_keywords{ key_num });
+        fprintf('READING KYWRD %s ... ', well_keywords{ key_num });       
         
-            fprintf('%s ... \n', kwd{key});        
-            tn = smry.getNms('TIMESTEP');
-            WELLS.STEP = smry.get(tn( 1 ),'TIMESTEP',:)';
+        if any(key_index)
+        
+            keyword  = smry.KEYWORDS{ key_index };
+            keyspace = smry.getNms(keyword);
+            keymatch = strcmp(well_name, keyspace);
+            
+            if any(keymatch)
+                
+                vals = smry.get(keyspace(keymatch), keyword,:)';
+                vals = vals(:, 1);
+                
+                % MSG
+                fprintf('%s (SZ.VALS %d %d)', ...
+                    keyspace{keymatch}, size(vals));
+            
+                evalIn = ['WELLS.' well_keywords{ key_num } ...
+                '(1:length(vals), iwell) = vals;'];
+            
+            else
+               
+                % MSG
+                fprintf('NO %s FOR %s', keyword, well_name);                
+                evalIn = ['WELLS.' well_keywords{ key_num } ...
+                    ' = zeros(valsz(1),1);'];
+                
+            end
             
         else
 
-            fprintf('%s ... ', kwd{ key });        
-            indx = strcmp(smry.KEYWORDS, kwd{ key }); 
-            vals = smry.get(nm,smry.KEYWORDS{ indx },:);
-            vals = vals';
-            fprintf('READING KEYWORD ... %s (FOUND? %d) (SZ.VALS %d %d) \n', ...
-                kwd{key}, any(indx), size(vals));  
+            % MSG
+            fprintf('KYWRD NOT FOUND');
+            evalIn = ['WELLS.' well_keywords{key_num} ' = 0;'];
 
-            vals = vals(:, 1);
-            evalIn = ['WELLS.' kwd{ key } ...
-            '(1:length(vals), iwell) = vals'';'];
-            eval(evalIn);
+        end        
 
-        end
-
+        eval(evalIn);
+        fprintf('\n')
+        
     end
     
 end
 
+% ========================================================
+% Reorganize into structure variable ()
+%%
+% --------------------------------------------------------
+% Read well production keywords   
+
+% ========================================================
+% Reorganize into structure variable: output_data
+output_data.WELLS   = WELLS;
+output_data.FIELD   = FIELD;
+output_data.VOLUMES = VOLUMES;
 
 end
 
