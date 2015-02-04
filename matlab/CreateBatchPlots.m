@@ -1,24 +1,63 @@
 function [ ] = CreateBatchPlots( summary_data, units )
 %CREATEBATCHPLOTS Batch creation of plots.
-%   The summary_data parameter is a struct of the simulation summary data.
-%   The units parameter is a struct with mappings from properties to units.
+%   The summary_data parameter is a struct of the 
+%   simulation summary data.
+%   The units parameter is a struct with mappings 
+%   from properties to units.
 
 % As user where to save plots
 folder = uigetdir('','Select directory to save the plots in');
 xdata = summary_data.('FIELD').('TIME');
+    
+if size(summary_data.FIELD.FPR,1) > 1
+    fpr(1);
+end
 
-fpr(1);
-wgpr(2);
-wlpr(2);
-wopr(2);
-wwpr(2);
-wgpt(3);
-wlpt(3);
-wopt(3);
-wwpt(3);
-wbhp(4);
-wwct(5);  
+if size(summary_data.WELLS.WGPR,1) > 1
+    wgpr(2);
+end
+
+if size(summary_data.WELLS.WLPR,1) > 1
+    wlpr(2);
+end
+
+if size(summary_data.WELLS.WOPR,1) > 1
+    wopr(2);
+end
+
+if size(summary_data.WELLS.WWPR,1) > 1
+    wwpr(2);
+end
+
+if size(summary_data.WELLS.WGPT,1) > 1
+    wgpt(3);
+end
+
+if size(summary_data.WELLS.WLPT,1) > 1
+    wlpt(3);
+end
+
+if size(summary_data.WELLS.WOPT,1) > 1
+    wopt(3);
+end
+
+if size(summary_data.WELLS.WWPT,1) > 1
+    wwpt(3);
+end
+
+if size(summary_data.WELLS.WBHP,1) > 1
+    wbhp(4);
+end
+
+if size(summary_data.WELLS.WWCT,1) > 1
+    wwct(5);  
+end
+
+if size(summary_data.FIELD.FGPR,1) > 1
 fgpr(6);
+end
+
+
 flpr(6);
 fopr(6);
 fwpr(6);
@@ -137,8 +176,8 @@ fwpt(7);
 
     function wgpr(index)
         property = 'WGPR';
-        ydata_all_wells = summary_data.WELLS.(property);
-        size_ydata_all_wells = size(ydata_all_wells);
+        ydata_all_wells = summary_data.WELLS.(property)
+        size_ydata_all_wells = size(ydata_all_wells)
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
         for i=1:size_ydata_all_wells(2)

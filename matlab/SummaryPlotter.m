@@ -6,7 +6,8 @@
 clear all; close all; clc;
 
 %% Get Path To Summary Data File
-[summary_file_path, folder_path, file_name, name, ext] = GetFilePath();
+[summary_file_path, summary_name_path, folder_path, ...
+    file_name, name, ext] = GetFilePath();
 
 %% Select unit set
 % Ask the user which units are to be used. The complete set of units for
@@ -16,43 +17,12 @@ units = questdlg('Pick unit set.','Select unit set', ...
 
     
 %% Read Summary Data
-% Use the _ReadEcliseSummary_ or _ReadAdgprsSummary_ function to read
+% Uses the _ReadEcliseSummary_ or _ReadAdgprsSummary_ functions to read
 % headers and values from file. Which method is used is determined by
 % looking at the file name.
+summary_data  = ReadSummaryData(summary_file_path, ...
+    summary_name_path, ext);
 
-if strcmp(ext, 'mat')
-    fprintf('Reading saved matlab variable (*.mat).\n');
-    summary_data = load(summary_file_path);
-    
-elseif strcmp(ext, 'UNSMRY')
-    
-    fprintf([ 'Using MRST libraries to read '...
-        'Eclipse summary file (*.UNSMRY).\n' ]);
-    
-    if 1 % exist('readEclipseOutputFileUnFmt', 'file') == 0
-    
-        fprintf('Path to MRST libraries not found.\n');
-        
-        [ mrst_file_path, mrst_folder_path, ~, ~, ~ ] = ...
-        GetMRSTPath();
-    
-        fprintf('MRST libraries found in: %s\n', mrst_folder_path);
-        
-        run(mrst_file_path);
-        
-        fprintf('Adding ad-fi and deckformat modules...\n');
-        
-        mrstModule add ad-fi deckformat
-        
-    end
-    
-    summary_data = ReadEclipseSummary(name);    
-
-else
-    fprintf([ 'File extension/format not '...
-        'reconized. The allowed extensions' ])
-    fprintf('are .mat, .UNSMRY and .HDF5\');
-end
 
 %% Create plots
 CreateBatchPlots(summary_data, units);

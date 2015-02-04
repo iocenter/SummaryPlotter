@@ -33,12 +33,12 @@ function [ output_data ] = ReadEclipseSummary( name )
 % ========================================================
 % Read Eclipse output data using MRST functions
 
-[rstrt, rsspec] = readRestartLocal(name);
+[rstrt, rsspec] = readRestartLocal(name); %#ok<*ASGLU>
 [smry, smspec]  = readSummaryLocal(name);
 init = readEclipseOutputFileUnFmt([name '.INIT']);
 grd  = readEclipseOutputFileUnFmt([name '.EGRID']);
 
-debug_output = true;
+debug_output = false;
 
 %%
 % ========================================================

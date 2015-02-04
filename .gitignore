@@ -4,5 +4,8 @@
 # Ignore test data files
 test_data/*
 
+# Ignore test plots
+test_plots/*
+
 # Ignoring published html
 matlab/html/*
