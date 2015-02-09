@@ -9,7 +9,7 @@ function [ ] = CreateBatchPlots( summary_data, units )
 folder = uigetdir('','Select directory to save the plots in');
 xdata = summary_data.('FIELD').('TIME');
     
-if size(summary_data.FIELD.FPR,1) > 1
+if size(summary_data.FIELD.FPR,1) > 0
     fpr(1);
 end
 
@@ -53,18 +53,37 @@ if size(summary_data.WELLS.WWCT,1) > 1
     wwct(5);  
 end
 
-if size(summary_data.FIELD.FGPR,1) > 1
+if size(summary_data.FIELD.FGPR,1) > 0
 fgpr(6);
 end
 
-
+if size(summary_data.FIELD.FLPR,1) > 0
 flpr(6);
+end
+
+if size(summary_data.FIELD.FOPR,1) > 0
 fopr(6);
+end
+
+if size(summary_data.FIELD.FWPR,1) > 0
 fwpr(6);
+end
+
+if size(summary_data.FIELD.FGPR,1) > 0
 fgpt(7);
+end
+
+if size(summary_data.FIELD.FLPT,1) > 0
 flpt(7);
+end
+
+if size(summary_data.FIELD.FOPT,1) > 1
 fopt(7);
+end
+
+if size(summary_data.FIELD.FWPT,1) > 1
 fwpt(7);
+end
 
     function fpr(index)
         lims = struct; % Will be filled by CreatePlot function
