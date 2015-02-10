@@ -22,14 +22,20 @@ for i=1:pd.ysets
     set(p, 'Color', cm.get_next(pd.ytypes{i}));
 end
 
+% Legend
 lh = legend(pd.ynames);
+
+
 lims.xmin = min(pd.xdata); lims.xmax = max(pd.xdata);
+
+
 ApplyPlotSettings(fh, ah, th, xlh, ylh, lh, lims);
 
 file_path = strcat(folder, '/', ... Folder path
                    num2str(index), '_', regexprep(lower(pd.title), ' ', '_'), ... File name
                    '.pdf'); % Extension
 
+% Save plot
 saveas(fh, file_path);
 clear cm fh ah th xlh ylh lh;
 

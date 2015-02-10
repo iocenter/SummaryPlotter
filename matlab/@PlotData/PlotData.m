@@ -15,6 +15,12 @@ classdef PlotData < handle
         units  % Contains the relevant part of the Units struct. E.g. Units().('metric')
     end
     
+    properties (SetAccess = public, GetAccess = public)
+       
+        config % struct var containing custom plot configuration
+        
+    end
+    
     methods
         function obj = PlotData(title, units) % Constructor. Sets the title and units
             if ~obj.set_units(units)
@@ -27,6 +33,8 @@ classdef PlotData < handle
         set_ylabel = set_ylabel(obj, name)
         set_xdata = set_xdata(obj, data)
         set_ydata = set_ydata(obj, data, names, types)
+        set_config = set_config(obj, name)
+        
     end
     
     methods (Access = private)

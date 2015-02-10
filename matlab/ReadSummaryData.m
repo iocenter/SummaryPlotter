@@ -32,7 +32,7 @@ elseif strcmp(ext, 'UNSMRY')
         'Eclipse summary file (*.UNSMRY).\n' ]);
     
     % Load mrst libraries if not already loaded
-    if 1 % exist('readEclipseOutputFileUnFmt', 'file') == 0
+    if exist('readEclipseOutputFileUnFmt', 'file') == 0
     
         fprintf('Path to MRST libraries not found.\n');
         

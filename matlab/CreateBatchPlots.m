@@ -1,4 +1,5 @@
-function [ ] = CreateBatchPlots( summary_data, units )
+function [ ] = CreateBatchPlots( summary_data, ...
+    units, config )
 %CREATEBATCHPLOTS Batch creation of plots.
 %   The summary_data parameter is a struct of the 
 %   simulation summary data.
@@ -93,6 +94,9 @@ end
         pd.set_ylabel(property);
         pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'pressure'});
+        
+        pd.set_config(config);        
+        
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end

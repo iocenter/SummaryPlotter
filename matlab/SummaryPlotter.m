@@ -15,7 +15,9 @@ clear all; close all; clc;
 units = questdlg('Pick unit set.','Select unit set', ...
     'field','metric', 'metric');
 
-%% 
+%% Custom plot config
+configname = '5spot_Case';
+config = ReadPlotConfig(configname);
 
     
 %% Read Summary Data
@@ -27,6 +29,6 @@ summary_data  = ReadSummaryData(summary_file_path, ...
 
 
 %% Create plots
-CreateBatchPlots(summary_data, units);
+CreateBatchPlots(summary_data, units, config);
 
 
