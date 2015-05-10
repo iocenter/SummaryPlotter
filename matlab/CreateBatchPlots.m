@@ -92,11 +92,9 @@ end
         pd = PlotData('Average Reservoir Pressure', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
-        pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'pressure'});
-        
-        pd.set_config(config);        
-        
+        pd.set_xdata(xdata);
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -107,8 +105,9 @@ end
         pd = PlotData('Field Gas Production Rate', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
+        pd.set_ydata([summary_data.FIELD.(property)], {property}, {'gas'});        
         pd.set_xdata(xdata);
-        pd.set_ydata([summary_data.FIELD.(property)], {property}, {'gas'});
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -119,8 +118,9 @@ end
         pd = PlotData('Field Liquid Production Rate', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
-        pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'liquid'});
+        pd.set_xdata(xdata);
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -131,8 +131,9 @@ end
         pd = PlotData('Field Oil Production Rate', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
-        pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'oil'});
+        pd.set_xdata(xdata);
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -143,8 +144,9 @@ end
         pd = PlotData('Field Water Production Rate', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
-        pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'water'});
+        pd.set_xdata(xdata);
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -155,8 +157,9 @@ end
         pd = PlotData('Field Gas Production Total', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
-        pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'gas'});
+        pd.set_xdata(xdata);
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -167,8 +170,9 @@ end
         pd = PlotData('Field Liquid Production Total', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
-        pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'liquid'});
+        pd.set_xdata(xdata);
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -179,8 +183,9 @@ end
         pd = PlotData('Field Oil Production Total', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
-        pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'oil'});
+        pd.set_xdata(xdata);
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -191,8 +196,9 @@ end
         pd = PlotData('Field Water Production Total', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(property);
-        pd.set_xdata(xdata);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'water'});
+        pd.set_xdata(xdata);
+        pd.set_config(config);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -208,8 +214,9 @@ end
             pd = PlotData(strcat('Gas Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'gas'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -226,8 +233,9 @@ end
             pd = PlotData(strcat('Liquid Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'liquid'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -244,8 +252,9 @@ end
             pd = PlotData(strcat('Oil Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'oil'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -262,8 +271,9 @@ end
             pd = PlotData(strcat('Water Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'water'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -280,8 +290,9 @@ end
             pd = PlotData(strcat('Gas Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'gas'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -298,8 +309,9 @@ end
             pd = PlotData(strcat('Liquid Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'liquid'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -316,8 +328,9 @@ end
             pd = PlotData(strcat('Oil Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'oil'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -334,8 +347,9 @@ end
             pd = PlotData(strcat('Water Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'water'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -352,8 +366,9 @@ end
             pd = PlotData(strcat('Well Bottom Hole Pressure, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'pressure'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -370,12 +385,17 @@ end
             pd = PlotData(strcat('Well Water Cut, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
-            pd.set_xdata(xdata);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'water'});
+            pd.set_xdata(xdata);
+            pd.set_config(config);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
     end
+    
+if isunix
+    system(['cd ' folder '; pdftk *.pdf output all_graphs.pdf']);
+end
     
 end
 

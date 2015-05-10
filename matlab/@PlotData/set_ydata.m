@@ -32,8 +32,18 @@ for i=1:types_size(2)
     end
 end
 
+if isempty(find(data,1))
+
+    obj.nzydata = 1 : length(data);
+
+else
+    
+    obj.nzydata = find(data);
+
+end    
+
 obj.ysets = data_size(1);
-obj.ydata = data;
+obj.ydata = data(obj.nzydata);
 obj.ynames = names;
 obj.ytypes = types;
 output = true;

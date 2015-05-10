@@ -29,6 +29,7 @@ summary_data  = ReadSummaryData(summary_file_path, ...
 
 
 %% Create plots
-CreateBatchPlots(summary_data, units, config);
+clc
+CreateBatchPlots(summary_data, units, config);  
 
 

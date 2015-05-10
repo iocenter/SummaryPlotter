@@ -25,15 +25,33 @@ end
 % Legend
 lh = legend(pd.ynames);
 
+% clc
+lims.xmin = min(pd.xdata); 
+lims.xmax = max(pd.xdata);
+lims.ymin = 0;
+lims.ymax = 1;
+    
+% Check if custom property
+loc_prop = pd.property;
+loc_conf = pd.config.(loc_prop);
 
-lims.xmin = min(pd.xdata); lims.xmax = max(pd.xdata);
+if isfield(loc_conf, 'lims')
 
+    lims.ymin = loc_conf.lims.ymin;
+    lims.ymax = loc_conf.lims.ymax;
+    
+elseif min(pd.ydata) < max(pd.ydata)
+    
+    lims.ymin = min(pd.ydata);
+    lims.ymax = max(pd.ydata);
+    
+end
 
 ApplyPlotSettings(fh, ah, th, xlh, ylh, lh, lims);
 
 file_path = strcat(folder, '/', ... Folder path
-                   num2str(index), '_', regexprep(lower(pd.title), ' ', '_'), ... File name
-                   '.pdf'); % Extension
+   num2str(index), '_', regexprep(lower(pd.title), ' ', '_'), ... File name
+   '.pdf'); % Extension
 
 % Save plot
 saveas(fh, file_path);
