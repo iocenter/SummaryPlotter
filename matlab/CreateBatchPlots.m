@@ -9,13 +9,17 @@ function [ ] = CreateBatchPlots( summary_data, ...
 % As user where to save plots
 folder = uigetdir('','Select directory to save the plots in');
 xdata = summary_data.('FIELD').('TIME');
-    
+
+if isunix
+    system(['cd ' folder '; rm -f *.pdf ;']);
+end
+
 if size(summary_data.FIELD.FPR,1) > 0
     fpr(1);
 end
 
 if size(summary_data.WELLS.WGPR,1) > 1
-    wgpr(2);
+%     wgpr(2);
 end
 
 if size(summary_data.WELLS.WLPR,1) > 1
@@ -31,7 +35,7 @@ if size(summary_data.WELLS.WWPR,1) > 1
 end
 
 if size(summary_data.WELLS.WGPT,1) > 1
-    wgpt(3);
+%     wgpt(3);
 end
 
 if size(summary_data.WELLS.WLPT,1) > 1
@@ -55,7 +59,7 @@ if size(summary_data.WELLS.WWCT,1) > 1
 end
 
 if size(summary_data.FIELD.FGPR,1) > 0
-fgpr(6);
+% fgpr(6);
 end
 
 if size(summary_data.FIELD.FLPR,1) > 0
@@ -71,7 +75,7 @@ fwpr(6);
 end
 
 if size(summary_data.FIELD.FGPR,1) > 0
-fgpt(7);
+% fgpt(7);
 end
 
 if size(summary_data.FIELD.FLPT,1) > 0
@@ -84,6 +88,12 @@ end
 
 if size(summary_data.FIELD.FWPT,1) > 1
 fwpt(7);
+end
+
+if isunix
+    output_file = 'all_graphs.pdf';
+    system(['cd ' folder '; pwd; rm -f ' output_file ';']);
+    system(['cd ' folder '; pdftk *.pdf output ' output_file ';']);
 end
 
     function fpr(index)
@@ -205,8 +215,8 @@ end
 
     function wgpr(index)
         property = 'WGPR';
-        ydata_all_wells = summary_data.WELLS.(property)
-        size_ydata_all_wells = size(ydata_all_wells)
+        ydata_all_wells = summary_data.WELLS.(property);
+        size_ydata_all_wells = size(ydata_all_wells);
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
         for i=1:size_ydata_all_wells(2)
@@ -244,10 +254,16 @@ end
     function wopr(index)
         property = 'WOPR';
         ydata_all_wells = summary_data.WELLS.(property);
-        size_ydata_all_wells = size(ydata_all_wells);
+
+        well_indices = 1 : size(ydata_all_wells,2);
+        if isfield(summary_data.WELLS, 'WIDX');
+            L = logical(summary_data.WELLS.WIDX);
+            well_indices = well_indices(L);
+        end
+        
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:size_ydata_all_wells(2)
+        for i=well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Oil Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -320,10 +336,16 @@ end
     function wopt(index)
         property = 'WOPT';
         ydata_all_wells = summary_data.WELLS.(property);
-        size_ydata_all_wells = size(ydata_all_wells);
+
+        well_indices = 1 : size(ydata_all_wells,2);
+        if isfield(summary_data.WELLS, 'WIDX');
+            L = logical(summary_data.WELLS.WIDX);
+            well_indices = well_indices(L);
+        end
+
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:size_ydata_all_wells(2)
+        for i=1:well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Oil Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -377,11 +399,19 @@ end
     function wwct(index)
         property = 'WWCT';
         ydata_all_wells = summary_data.WELLS.(property);
-        size_ydata_all_wells = size(ydata_all_wells);
+        
+        well_indices = 1 : size(ydata_all_wells,2);
+        if isfield(summary_data.WELLS, 'WIDX');
+            L = logical(summary_data.WELLS.WIDX);
+            well_indices = well_indices(L);
+        end
+        
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:size_ydata_all_wells(2)
-            wellname = strcat('Well ', num2str(i));
+        for i=well_indices
+            if L(i); welltype = ' (producer)'; 
+            else welltype = ' (injector)'; end
+            wellname = strcat('Well ', num2str(i), welltype);
             pd = PlotData(strcat('Well Water Cut, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
@@ -393,9 +423,8 @@ end
         end
     end
     
-if isunix
-    system(['cd ' folder '; pdftk *.pdf output all_graphs.pdf']);
-end
-    
+    function well_indices = get_well_indices(ydata_all_wells, summary_data)
+
+
 end
 

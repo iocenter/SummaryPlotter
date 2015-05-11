@@ -30,16 +30,32 @@ function [ file_path, name_path, folder_path, file_name, ...
 
 %% 
 fprintf('file_path has not been provided as a parameter.\n');
-fprintf('Select a summary file:\n');
+fprintf('Select a summary file (*.H5, *.UNSMRY, or *.mat):\n');
 [file_name, folder_path, ~] = uigetfile( ...
-    {'*.UNSMRY'; '*.H5'; '*.mat';},'Select summary file');
+    {'*.H5'; '*.UNSMRY'; '*.mat';},...
+    'Select summary file (*.H5, *.UNSMRY, or *.mat)');
 C = strsplit(file_name, '.');
-name = C{1};
-ext = C{2};
+
+szC = size(C,2);
+
+if szC==2
+    
+	name = C{1};
+	ext = C{2};
+
+elseif szC>2
+
+	D = C(1:szC-1);
+	name = strjoin(D,'.');
+	ext = C{szC};
+
+end
+
 file_path = strcat(folder_path, file_name);
 name_path = strcat(folder_path, name);
 
 fprintf('%s selected.\n', file_path);
+fprintf('Extension is %s.\n', ext);
 
 end
 

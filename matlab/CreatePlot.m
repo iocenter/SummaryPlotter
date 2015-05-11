@@ -3,6 +3,8 @@ function CreatePlot( pd, folder, index, lims )
 %   The plot is saved in the input folder
 %   pd must be a PlotData object.
 
+debug_output = false;
+
 properties = PlotProperties(); % Get properties struct
 cm = ColorMapper();
 
@@ -16,6 +18,13 @@ ylh = ylabel(ah, pd.ylabel);
 
 % Plotting
 hold on;
+
+if debug_output
+    fprintf('[%s] pd data: ', mfilename);
+    fprintf('pd.xdata [%d %d] - ', size(pd.xdata));
+    fprintf('pd.ydata [%d %d] - ', size(pd.ydata));
+end
+
 for i=1:pd.ysets
     p = plot(pd.xdata, pd.ydata(i,:));
     set(p, 'LineWidth', properties.line.style.LineWidth);

@@ -16,7 +16,8 @@ units = questdlg('Pick unit set.','Select unit set', ...
     'field','metric', 'metric');
 
 %% Custom plot config
-configname = '5spot_Case';
+% configname = '5spot_Case';
+configname = '5spot_4i1p_hz';
 config = ReadPlotConfig(configname);
 
     
@@ -29,7 +30,6 @@ summary_data  = ReadSummaryData(summary_file_path, ...
 
 
 %% Create plots
-clc
 CreateBatchPlots(summary_data, units, config);  
 
 

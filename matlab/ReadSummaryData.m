@@ -62,7 +62,7 @@ elseif strcmp(ext, 'H5')
 else
     fprintf([ 'File extension/format not '...
         'reconized. The allowed extensions' ])
-    fprintf('are .mat, .UNSMRY and .HDF5\');
+    fprintf('are .mat, .UNSMRY and .H5\');
 end
 
 
