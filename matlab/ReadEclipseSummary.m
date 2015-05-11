@@ -165,6 +165,7 @@ end
 well_names = or(strncmp(smry.WGNAMES,'I',1), ...
                 strncmp(smry.WGNAMES,'P',1));
 WELLS.WNMS = smry.WGNAMES(well_names);
+widx = ones(1, size(WELLS.WNMS, 1));
 
 well_keywords = { ...
     'TIME' 'TIMESTEP' 'WGPR' 'WOPR' 'WWPR' 'WLPR' ...
@@ -219,13 +220,24 @@ for iwell = 1 : size(WELLS.WNMS, 1)
             evalIn = ['WELLS.' well_keywords{key_num} ' = 0;'];
 
         end        
-
+    
         eval(evalIn);
         fprintf('\n')
         
     end
     
+    % Set injector/producer indices based on WOPR and WWPR values
+    if isfield(WELLS, 'WOPR') && isfield(WELLS, 'WWPR')
+        size(WELLS.WOPR)
+        if sum(WELLS.WOPR(:,iwell))<1e-3 && ...
+                sum(WELLS.WWPR(:,iwell))<1e-3
+            widx(1, iwell) = 0;
+        end	        
+    end        
+    
 end
+
+WELLS.WIDX = widx; 
 
 % ========================================================
 % Reorganize into structure variable ()

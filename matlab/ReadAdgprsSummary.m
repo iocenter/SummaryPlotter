@@ -104,7 +104,7 @@ for iWELL = 1 : iWELLmax,
     WWPT(1:idtmax, iWELL) = cumsum(WWPR(1:idtmax, iWELL) .* dtime);
     WLPT(1:idtmax, iWELL) = cumsum(WLPR(1:idtmax, iWELL) .* dtime);
    
-    
+    % Set injector/producer indices based on WOPR and WWPR values    
     if sum(WOPR(:, iWELL))<1e-3 && sum(WWPR(:, iWELL))<1e-3
 		widx(1, iWELL) = 0;
     end	
