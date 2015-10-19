@@ -218,11 +218,13 @@ end
 
     function wgpr(index)
         property = 'WGPR';
-        ydata_all_wells = summary_data.WELLS.(property);
-        size_ydata_all_wells = size(ydata_all_wells);
+        
+        [well_indices, ydata_all_wells, welltype] = ...
+        get_data(summary_data, property);  
+    
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:size_ydata_all_wells(2)
+        for i=1:well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Gas Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -256,13 +258,9 @@ end
 
     function wopr(index)
         property = 'WOPR';
-        ydata_all_wells = summary_data.WELLS.(property);
-
-        well_indices = 1 : size(ydata_all_wells,2);
-        if isfield(summary_data.WELLS, 'WIDX');
-            L = logical(summary_data.WELLS.WIDX);
-            well_indices = well_indices(L);
-        end
+        
+        [well_indices, ydata_all_wells, welltype] = ...
+        get_data(summary_data, property);  
         
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
@@ -300,11 +298,13 @@ end
 
     function wgpt(index)
         property = 'WGPT';
-        ydata_all_wells = summary_data.WELLS.(property);
-        size_ydata_all_wells = size(ydata_all_wells);
+        
+        [well_indices, ydata_all_wells, welltype] = ...
+        get_data(summary_data, property);      
+        
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:size_ydata_all_wells(2)
+        for i=1:well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Gas Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -338,13 +338,9 @@ end
 
     function wopt(index)
         property = 'WOPT';
-        ydata_all_wells = summary_data.WELLS.(property);
-
-        well_indices = 1 : size(ydata_all_wells,2);
-        if isfield(summary_data.WELLS, 'WIDX');
-            L = logical(summary_data.WELLS.WIDX);
-            well_indices = well_indices(L);
-        end
+        
+        [well_indices, ydata_all_wells, welltype] = ...
+        get_data(summary_data, property);      
 
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
@@ -401,20 +397,15 @@ end
 
     function wwct(index)
         property = 'WWCT';
-        ydata_all_wells = summary_data.WELLS.(property);
-        
-        well_indices = 1 : size(ydata_all_wells,2);
-        if isfield(summary_data.WELLS, 'WIDX');
-            L = logical(summary_data.WELLS.WIDX);
-            well_indices = well_indices(L);
-        end
+
+        [well_indices, ydata_all_wells, welltype] = ...
+        get_data(summary_data, property);      
         
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
         for i=well_indices
-            if L(i); welltype = ' (producer)'; 
-            else welltype = ' (injector)'; end
-            wellname = strcat('Well ', num2str(i), welltype);
+            wellname = strcat('Well ', num2str(i), ...
+                ' [', welltype{i}, ']');
             pd = PlotData(strcat('Well Water Cut, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(property);
@@ -428,7 +419,35 @@ end
     
     function well_indices = get_well_indices(ydata_all_wells, summary_data)
 
+    % Returns ydata for given property, and well_indices
+    % vector describing whether well is producer or injector    
+    function [well_indices, ydata_all_wells, welltype] = ...
+            get_data(summary_data, property)
+        
+        % Select summary data from main structure
+        ydata_all_wells = summary_data.WELLS.(property);
+        sz_ydata = size(ydata_all_wells);
+        
+        % Find index vector L for injectors(0), producers(1)
+        % 
+        well_indices = 1 : sz_ydata(2);
+        isfield(summary_data.WELLS, 'WIDX')
+        if isfield(summary_data.WELLS, 'WIDX');
+            L = logical(summary_data.WELLS.WIDX);
+        else
+            L = true(size(well_indices));
+        end
+        well_indices = well_indices(L);
+
+        % welltype
+        welltype = cell(1,sz_ydata(2));
+        for i=1:size(L,2)
+            if L(i)
+                welltype{i} = 'producer';
+            else
+                welltype{i} = 'injector';
+            end
+        end
     end
 
 end
-
