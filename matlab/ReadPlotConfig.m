@@ -2,9 +2,8 @@ function config = ReadPlotConfig(configname)
 % ReadPlotConfig Returns custom configuration for plots
 % depending on configname
 
-fprintf('Config %s chosen.\n', configname)
 config = struct();
-
+%%%%%%%%%%%%%%%%%%%%%%
 config.FPR  = struct();
 config.WBHP = struct();
 config.WWCT = struct();
@@ -84,6 +83,12 @@ switch configname
 		config.WWPR.lims = struct('ymin',-2000,  'ymax', 2000);
 		config.WLPR.lims = struct('ymin',-2000,  'ymax', 2000);
 
+	otherwise
+
+		configname = 'default';
+
 end
  
+fprintf('Config %s chosen.\n', configname)
+
 end

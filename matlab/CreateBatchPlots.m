@@ -1,17 +1,20 @@
 function [ ] = CreateBatchPlots( summary_data, ...
-    units, config )
+    units, config, folder )
 %CREATEBATCHPLOTS Batch creation of plots.
 %   The summary_data parameter is a struct of the 
 %   simulation summary data.
 %   The units parameter is a struct with mappings 
 %   from properties to units.
 
-% As user where to save plots
-folder = uigetdir('','Select directory to save the plots in');
+% Ask user where to save plots
+if isempty(folder)
+    folder = uigetdir('','Select directory to save the plots in');
+end
+
 xdata = summary_data.('FIELD').('TIME');
 
 if isunix
-    system(['cd ' folder '; rm -f *.pdf ;']);
+    [status,cmdout] = system(['cd ' folder '; rm -f *.pdf ;']);
 end
 
 if size(summary_data.FIELD.FPR,1) > 0
@@ -104,7 +107,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'pressure'});
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -117,7 +120,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'gas'});        
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -130,7 +133,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'liquid'});
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -143,7 +146,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'oil'});
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -156,7 +159,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'water'});
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -169,7 +172,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'gas'});
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -182,7 +185,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'liquid'});
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -195,7 +198,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'oil'});
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -208,7 +211,7 @@ end
         pd.set_ylabel(property);
         pd.set_ydata([summary_data.FIELD.(property)], {property}, {'water'});
         pd.set_xdata(xdata);
-        pd.set_config(config);
+        pd.set_config(config, property);
         CreatePlot(pd, folder, index, lims);
         clear pd;
     end
@@ -226,7 +229,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'gas'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -245,7 +248,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'liquid'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -270,7 +273,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'oil'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -289,7 +292,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'water'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -308,7 +311,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'gas'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -327,7 +330,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'liquid'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -352,7 +355,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'oil'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -371,7 +374,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'water'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -390,7 +393,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'pressure'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -417,7 +420,7 @@ end
             pd.set_ylabel(property);
             pd.set_ydata(ydata_all_wells(:,i)', {property}, {'water'});
             pd.set_xdata(xdata);
-            pd.set_config(config);
+            pd.set_config(config, property);
             CreatePlot(pd, folder, index, lims);
             clear pd;
         end
@@ -425,6 +428,7 @@ end
     
     function well_indices = get_well_indices(ydata_all_wells, summary_data)
 
+    end
 
 end
 

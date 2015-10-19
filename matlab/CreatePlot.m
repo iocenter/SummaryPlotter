@@ -40,9 +40,11 @@ lims.xmax = max(pd.xdata);
 lims.ymin = 0;
 lims.ymax = 1;
     
-% Check if custom property
-loc_prop = pd.property;
-loc_conf = pd.config.(loc_prop);
+% Check if custom property is specified
+loc_conf = struct();
+propname = fieldnames(pd.config);
+evalIn = [ 'loc_conf = pd.config.' propname{1} ';' ];
+eval(evalIn);
 
 if isfield(loc_conf, 'lims')
 
