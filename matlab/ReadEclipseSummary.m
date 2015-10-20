@@ -93,6 +93,13 @@ function [ output_data ] = ReadEclipseSummary( name )
 %  /home/bellout/git/SummaryPlotter/test_data
 % 
 %%
+
+fprintf([ 'Using MRST libraries to read '...
+    'Eclipse summary file (*.UNSMRY).\n' ]);
+
+% Load mrst libraries if not already loaded
+LoadMRSTLibs
+
 % ========================================================
 % Read Eclipse output data using MRST functions
 
@@ -291,7 +298,7 @@ for iwell = 1 : size(WELLS.WNMS, 1)
     
     % Set injector/producer indices based on WOPR and WWPR values
     if isfield(WELLS, 'WOPR') && isfield(WELLS, 'WWPR')
-        size(WELLS.WOPR)
+        % size(WELLS.WOPR);
         if sum(WELLS.WOPR(:,iwell))<1e-3 && ...
                 sum(WELLS.WWPR(:,iwell))<1e-3
             widx(1, iwell) = 0;
@@ -314,5 +321,27 @@ output_data.WELLS   = WELLS;
 output_data.FIELD   = FIELD;
 output_data.VOLUMES = VOLUMES;
 
+end % end function
+
+
+
+function LoadMRSTLibs
+
+if exist('readEclipseOutputFileUnFmt', 'file') == 0
+
+    fprintf('Path to MRST libraries not found.\n');
+    
+    [ mrst_file_path, mrst_folder_path, ~, ~, ~ ] = ...
+    GetMRSTPath();
+
+    fprintf('MRST libraries found in: %s\n', mrst_folder_path);
+    
+    run(mrst_file_path);
+    
+    fprintf('Adding ad-fi and deckformat modules...\n');
+    
+    mrstModule add ad-fi deckformat
+    
 end
 
+end % end function

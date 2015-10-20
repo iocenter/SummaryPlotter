@@ -7,7 +7,8 @@ clear all; close all; clc;
 
 %% Provide name of pre-defined summary data file
 % path to target_save_folder is also define here
-summary_data_file = 'test';
+% summary_data_file = 'test';
+summary_data_file = '5spot_mjcase_s5';
 % If summary_data_file = '' then path to summary data file 
 % set through GUI in GetFilePath, if target_folder = '' from
 % GetFilePath, then later defined through GUI in CreateBatchPlots
@@ -27,8 +28,8 @@ units = 'metric'; % alternative: 'field'
 
 %% Load custom plot config
 % If nonexisting, the config is set to default values
-% configname = '5spot_Case';
-configname = '5spot_4i1p_hz';
+configname = '5spot_mjcase_s5';
+% configname = '5spot_4i1p_hz';
 config = ReadPlotConfig(configname);
 
 %% Read Summary Data
