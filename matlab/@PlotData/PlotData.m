@@ -4,7 +4,6 @@ classdef PlotData < handle
     %   for populating the fields.
     
     properties (SetAccess = private, GetAccess = public)
-        property % name of data
         title    % Plot title
         xlabel   % x-axis label
         ylabel   % y-axis label. Using method.
@@ -16,7 +15,8 @@ classdef PlotData < handle
         ytypes   % 1D cell array of fluid types for the data sets. E.g. oil, water, gas, fluid. Lenght must be equal to number of rows in ydata.
         units    % Contains the relevant part of the Units struct. E.g. Units().('metric')
 
-        config   % struct var containing custom plot configuration
+        datatype % Specifies the type of data being plotted, e.g., FOPT
+        config   % Struct var containing custom plot configuration for each data type
     end
     
     properties (SetAccess = public, GetAccess = public)
@@ -36,7 +36,7 @@ classdef PlotData < handle
         set_ylabel = set_ylabel(obj, name)
         set_xdata = set_xdata(obj, data)
         set_ydata = set_ydata(obj, data, names, types)
-        set_config = set_config(obj, config, property)
+        set_config = set_config(obj, config, datatype)
         
     end
     

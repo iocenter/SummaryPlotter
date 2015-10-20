@@ -2,14 +2,85 @@ function [ output_data ] = ReadAdgprsSummary( name )
 % READADGPRSSUMMARY Reads AD-GPRS *.H5 file using
 % MATLABs built-in functions
 
-debug_output = true;
-save_file = true;
-
-output_data = struct;
-
+%   Uses MATLAB functions: hdf5info and hdf5read 
+%   to read ADGPRS HDF5 output data file
+% 
+%   Selects subset of data fields from raw data, and
+%   reorganizes these fields into a matlab structure 
+%   variable
+%
+%   Input is the ADGPRS file name without extension
+% 
+%   Output is a structure array (output_data) where 
+%   each field contains one datatype (FOPT, FWPT, ..., 
+%   WWPT, etc). 
+% 
+%   The structure of the output data variable is as 
+%   follows:
+% 
+% output_data = 
+%          WELLS: [1x1 struct]
+%          FIELD: [1x1 struct]
+%          CELLS: [1x1 struct]
+% 
+%   Each substructure is given as:
+% 
+% output_data.WELLS = 
+% 
+%     TIME: [tstep_x_1 double]
+%     WIDX: [0 0 0 0 1]
+%     WGPR: [tstep_x_nwells double]
+%     WOPR: [tstep_x_nwells double]
+%     WWPR: [tstep_x_nwells double]
+%     WLPR: [tstep_x_nwells double]
+%     WBHP: [tstep_x_nwells double]
+%     WGPT: [tstep_x_nwells double]
+%     WOPT: [tstep_x_nwells double]
+%     WWPT: [tstep_x_nwells double]
+%     WLPT: [tstep_x_nwells double]
+%     WWCT: [tstep_x_nwells double]
+% 
+% output_data.FIELD = 
+% 
+%     FGPR: [1_x_tstep double]
+%     FOPR: [1_x_tstep double]
+%     FWPR: [1_x_tstep double]
+%     FLPR: [1_x_tstep double]
+%     FGPT: [1_x_tstep double]
+%     FOPT: [1_x_tstep double]
+%     FWPT: [1_x_tstep double]
+%     FLPT: [1_x_tstep double]
+%      FPR: [1_x_tstep double]
+%     FPRH: [1_x_tstep double]
+%     TIME: [1_x_tstep double]
+% 
+% output_data.CELLS = 
+% 
+%       idtmax: nsteps
+%     icellmax: ncells
+%     iWELSmax: nwells
+%         SGAS: [nsteps_x_ncells double]
+%         SOIL: [nsteps_x_ncells double]
+%         SWAT: [nsteps_x_ncells double]
+%         TIME: [nsteps_x1 double]
+% 
+%    with dimensions:
+% 
+%      tstep: number of timestep 
+%      nwells: number of wells 
+%      ncells: number of grid cells in reservoir
+% 
+%    Example: 
+%    summary_data = ReadEclipseSummary(ADG_5SPOT_gradient_with_DISCRETE);
+% 
 %%
 % ========================================================
 % Read AD-GPRS output data using h5 libraries
+
+debug_output = false;
+save_file    = true;
+
+output_data = struct;
 
 if debug_output
     fprintf('\n\n')

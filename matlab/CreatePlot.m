@@ -8,6 +8,7 @@ debug_output = false;
 properties = PlotProperties(); % Get properties struct
 cm = ColorMapper();
 
+% PROBLEM: Windows keep coming up despite Visible=Off
 fh = figure('Visible', 'off');
 ah = axes();
 th = title(pd.title);
@@ -42,8 +43,8 @@ lims.ymax = 1;
     
 % Check if custom property is specified
 loc_conf = struct();
-propname = fieldnames(pd.config);
-evalIn = [ 'loc_conf = pd.config.' propname{1} ';' ];
+typename = fieldnames(pd.config);
+evalIn = [ 'loc_conf = pd.config.' typename{1} ';' ];
 eval(evalIn);
 
 if isfield(loc_conf, 'lims')

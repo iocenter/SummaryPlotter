@@ -20,15 +20,78 @@ function [ output_data ] = ReadEclipseSummary( name )
 %   variable
 %
 %   Input is the Eclipse file name without extension
-%   Outputs matlab structure variable: output_data
+%   
+%   Output is a structure array (output_data) where 
+%   each field contains one datatype (FOPT, FWPT, ..., 
+%   WWPT, etc) obtained from Eclipse output *.UNSMRY 
+%   file
 % 
+%   The structure of the output data variable is as 
+%   follows:
+% 
+%   output_data = 
+%       WELLS: [1x1 struct]
+%       FIELD: [1x1 struct]
+%       CELLS: [1x1 struct]
+% 
+%   Each substructure is given as:
+% 
+%   output_data.WELLS = 
+% 
+%       TIME: [tstep_x_1 double]
+%       WIDX: [0 0 0 0 1]
+%       WGPR: [tstep_x_nwells double]
+%       WOPR: [tstep_x_nwells double]
+%       WWPR: [tstep_x_nwells double]
+%       WLPR: [tstep_x_nwells double]
+%       WBHP: [tstep_x_nwells double]
+%       WGPT: [tstep_x_nwells double]
+%       WOPT: [tstep_x_nwells double]
+%       WWPT: [tstep_x_nwells double]
+%       WLPT: [tstep_x_nwells double]
+%       WWCT: [tstep_x_nwells double]
+% 
+%   output_data.FIELD = 
+% 
+%       FGPR: [1_x_tstep double]
+%       FOPR: [1_x_tstep double]
+%       FWPR: [1_x_tstep double]
+%       FLPR: [1_x_tstep double]
+%       FGPT: [1_x_tstep double]
+%       FOPT: [1_x_tstep double]
+%       FWPT: [1_x_tstep double]
+%       FLPT: [1_x_tstep double]
+%        FPR: [1_x_tstep double]
+%       FPRH: [1_x_tstep double]
+%       TIME: [1_x_tstep double]
+% 
+%   output_data.CELLS = 
+% 
+%     idtmax: nsteps
+%   icellmax: ncells
+%   iWELSmax: nwells
+%       SGAS: [nsteps_x_ncells double]
+%       SOIL: [nsteps_x_ncells double]
+%       SWAT: [nsteps_x_ncells double]
+%       TIME: [nsteps_x1 double]
+% 
+%   with dimensions:
+% 
+%      tstep:  number of timestep 
+%      nwells: number of wells 
+%      ncells: number of grid cells in reservoir
+% 
+% 
+%   Example: 
+%   summary_data = ReadEclipseSummary(ECL_5SPOT);
+% 
+% == For test ==
 % Reload Eclipse test data:
 % cd ~/WORK-3/D-WRKS-A/WplcOpt_PSO_MJ/models\
 % /60x60_CGpaper_5_well_model/eclipse
 % cp *.EGRID *.INIT *.RSSPEC *.SMSPEC *.UNRST *.UNSMRY\
 %  /home/bellout/git/SummaryPlotter/test_data
-
-
+% 
 %%
 % ========================================================
 % Read Eclipse output data using MRST functions
