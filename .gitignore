@@ -8,5 +8,8 @@
 test_data/*
 test_plots/*
 
+# Ignore test plots
+test_plots/*
+
 # Ignoring published html
 matlab/html/*
