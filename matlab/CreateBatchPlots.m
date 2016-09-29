@@ -12,8 +12,8 @@ function [ ] = CreateBatchPlots( summary_data, ...
 % 
 %   folder: target folder where to print plot
 
-% Ask user where to save plots
-if isempty(folder)
+% As user where to save plots
+if nargin ~= 4;
     folder = uigetdir('','Select directory to save the plots in');
 end
 
