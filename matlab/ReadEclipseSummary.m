@@ -108,7 +108,7 @@ LoadMRSTLibs
 init = readEclipseOutputFileUnFmt([name '.INIT']);
 grd  = readEclipseOutputFileUnFmt([name '.EGRID']);
 
-debug_output = false;
+debug_output = true;
 
 %%
 % ========================================================
@@ -125,11 +125,16 @@ fprintf(['CURRENT KEYWORDS:\n' frmt '\n\n' ], ...
 volume_name  = 'VOLUMES';
 volume_keywords = {'FGIP'  'FGIPG' 'FGIPL' 'FOIP' ...
                    'FOIPG' 'FOIPL' 'FWIP'};
+fprintf('READING %s ...\n', volume_name);
 
 for key_num = 1 : length(volume_keywords)
     
     key_index = strcmp(smry.KEYWORDS, volume_keywords{key_num});
     
+    if debug_output
+        fprintf('READING %s ... ', volume_keywords{key_num});
+    end
+
     if any(key_index)
         
         keyword  = smry.KEYWORDS{ key_index };
@@ -151,21 +156,21 @@ end
 % --------------------------------------------------------
 % For debugging purposes:
 if debug_output
-fprintf('\n\n')
-fprintf('FGIP  = %9.3E : GAS INIT IN PLACE\n', ...
-    max(VOLUMES.FGIP));
-fprintf('FGIPG = %9.3E : GAS INIT IN PLACE (GAS PHASE)\n', ...
-    max(VOLUMES.FGIPG));
-fprintf('FGIPL = %9.3E : GAS INIT IN PLACE (LIQUID PHASE)\n', ...
-    max(VOLUMES.FGIPL));
-fprintf('FOIP  = %9.3E : OIL INIT IN PLACE\n', ...
-    max(VOLUMES.FOIP));
-fprintf('FOIPG = %9.3E : OIL INIT IN PLACE (GAS PHASE)\n', ...
-    max(VOLUMES.FOIPG));
-fprintf('FOIPL = %9.3E : OIL INIT IN PLACE (LIQUID PHASE)\n', ...
-    max(VOLUMES.FOIPL));
-fprintf('FWIP  = %9.3E : WATER INITIALLY IN PLACE\n', ...
-    max(VOLUMES.FWIP));
+    fprintf('\n\n')
+    fprintf('FGIP  = %9.3E : GAS INIT IN PLACE\n', ...
+        max(VOLUMES.FGIP));
+    fprintf('FGIPG = %9.3E : GAS INIT IN PLACE (GAS PHASE)\n', ...
+        max(VOLUMES.FGIPG));
+    fprintf('FGIPL = %9.3E : GAS INIT IN PLACE (LIQUID PHASE)\n', ...
+        max(VOLUMES.FGIPL));
+    fprintf('FOIP  = %9.3E : OIL INIT IN PLACE\n', ...
+        max(VOLUMES.FOIP));
+    fprintf('FOIPG = %9.3E : OIL INIT IN PLACE (GAS PHASE)\n', ...
+        max(VOLUMES.FOIPG));
+    fprintf('FOIPL = %9.3E : OIL INIT IN PLACE (LIQUID PHASE)\n', ...
+        max(VOLUMES.FOIPL));
+    fprintf('FWIP  = %9.3E : WATER INITIALLY IN PLACE\n', ...
+        max(VOLUMES.FWIP));
 end
 
 %%
@@ -179,11 +184,12 @@ field_keywords = {...
     'TIME' 'FPR'  'FGPR' 'FOPR' 'FWPR' ...
     'FLPR' 'FGPT' 'FOPT' 'FWPT' 'FLPT' ...
     'FOE' };
+fprintf('READING %s VALUES ...\n', field_name);
 
 for key_num = 1 : length(field_keywords)
     
     if debug_output
-    fprintf('READING %s ... ', field_keywords{key_num});
+        fprintf('READING %s ... ', field_keywords{key_num});
     end
     
     key_index = strcmp(smry.KEYWORDS, field_keywords{key_num});
@@ -194,7 +200,7 @@ for key_num = 1 : length(field_keywords)
         keyspace = smry.getNms(keyword);
        
         if debug_output
-        fprintf('(%s/%s) ... ', keyword, keyspace{1});
+            fprintf('(keyword/keyspace)=(%s/%s) ... ', keyword, keyspace{1});
         end
     
         vals = smry.get(keyspace, keyword,:);
@@ -260,8 +266,17 @@ for iwell = 1 : size(WELLS.WNMS, 1)
         
             keyword  = smry.KEYWORDS{ key_index };
             keyspace = smry.getNms(keyword);
-            keymatch = strcmp(well_name, keyspace);
+
+            if strcmp(keyspace,':+:+:+:+') % make exception for time
+                keymatch = logical(1);
+            else
+                keymatch = strcmp(well_name, keyspace);
+            end
             
+            if debug_output
+                fprintf('(keyword/keyspace)=(%s/%s) ... ', keyword, keyspace{1});
+            end
+
             if any(keymatch)
                 
                 vals = smry.get(keyspace(keymatch), keyword,:)';

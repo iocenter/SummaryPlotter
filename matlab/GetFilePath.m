@@ -29,8 +29,22 @@ function [ file_path, name_path, folder_path, file_name, ...
 %     Example: .mat
 
 %% 
-predef = false;
-target_folder = '';
+if nargin ~= 2;
+
+	fprintf('file_path has not been provided as a parameter.\n');
+	fprintf('Select a summary file (*.H5, *.UNSMRY, or *.mat):\n');
+
+	[file_name, folder_path, ~] = uigetfile( ...
+	    {'*.H5'; '*.UNSMRY'; '*.mat';},...
+	    'Select summary file (*.H5, *.UNSMRY, or *.mat)');
+
+else
+
+	fprintf('file_path and folder_path provided by user.\n');
+	
+end
+
+C = strsplit(file_name, '.');
 
 if ~isempty(varargin)
 
