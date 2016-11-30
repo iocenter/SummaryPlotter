@@ -8,7 +8,7 @@ if data_dims(1) ~= 1
     return;
 end
 
-obj.xdata = data;
+obj.xdata = data(obj.nzydata);
 output = true;
 return
 

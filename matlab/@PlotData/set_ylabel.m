@@ -11,6 +11,7 @@ if ~isfield(obj.units, name)
 else
     unit = obj.units.(name);
     obj.ylabel = strcat(name, ' [', unit, ']');
+    obj.datatype = name;
     output = true;
 end
 

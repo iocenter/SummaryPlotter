@@ -1,9 +1,18 @@
 function output = set_ydata( obj, data, names, types )
 %SET_YDATA Sets the ydata, ynames and ytypes fields
 
+debug_output = false;
+
 data_size = size(data);
 names_size = size(names);
 types_size = size(types);
+
+if debug_output
+    fprintf('[%s] data sizes: ', mfilename);
+    fprintf('data_size [%d %d] - ', data_size);
+    fprintf('names_size [%d %d] - ', names_size);
+    fprintf('types_size [%d %d]\n', types_size);
+end
 
 if names_size(2) ~= data_size(1) || types_size(2) ~= data_size(1)
     fprintf('The number of columns in names and types must ');
@@ -32,8 +41,18 @@ for i=1:types_size(2)
     end
 end
 
+if isempty(find(data,1))
+
+    obj.nzydata = 1 : length(data);
+
+else
+    
+    obj.nzydata = find(data);
+
+end    
+
 obj.ysets = data_size(1);
-obj.ydata = data;
+obj.ydata = data(obj.nzydata);
 obj.ynames = names;
 obj.ytypes = types;
 output = true;

@@ -32,7 +32,7 @@ elseif strcmp(ext, 'UNSMRY')
         'Eclipse summary file (*.UNSMRY).\n' ]);
     
     % Load mrst libraries if not already loaded
-    if 1 % exist('readEclipseOutputFileUnFmt', 'file') == 0
+    if exist('readEclipseOutputFileUnFmt', 'file') == 0
     
         fprintf('Path to MRST libraries not found.\n');
         
@@ -62,7 +62,7 @@ elseif strcmp(ext, 'H5')
 else
     fprintf([ 'File extension/format not '...
         'reconized. The allowed extensions' ])
-    fprintf('are .mat, .UNSMRY and .HDF5\');
+    fprintf('are .mat, .UNSMRY and .H5\');
 end
 
 

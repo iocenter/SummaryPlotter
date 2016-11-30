@@ -1,8 +1,12 @@
 # Ignore tmp files
 *\~
 
+# Ignore pdf files
+*.pdf
+
 # Ignore test data files
 test_data/*
+test_plots/*
 
 # Ignore test plots
 test_plots/*

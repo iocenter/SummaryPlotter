@@ -35,6 +35,7 @@ set(lh, 'FontSize', properties.font.legend.FontSize);
 
 % Axes scaling ============================================================
 if isfield(lims, 'xmin') && isfield(lims, 'xmax')
+    lims.xmin = 0;
     set(ah, 'XLim', [lims.xmin, lims.xmax]);
 end
 
