@@ -16,31 +16,48 @@ th = title(pd.title);
 % Setting axis labels and settings
 xlh = xlabel(ah, pd.xlabel);
 ylh = ylabel(ah, pd.ylabel);
+ynames = {};
 
 % Plotting
 hold on;
 
-if debug_output
-    fprintf('[%s] pd data: ', mfilename);
-    fprintf('pd.xdata [%d %d] - ', size(pd.xdata));
-    fprintf('pd.ydata [%d %d] - ', size(pd.ydata));
-end
+for jj = 1 : size(pd.ydata,2)
 
-for i=1:pd.ysets
-    p = plot(pd.xdata, pd.ydata(i,:));
-    set(p, 'LineWidth', properties.line.style.LineWidth);
-    set(p, 'Color', cm.get_next(pd.ytypes{i}));
+    if debug_output
+        fprintf('[%s] pd data: ', mfilename);
+        fprintf('pd.xdata [%d %d] - ', size(pd.xdata{jj}));
+        fprintf('pd.ydata [%d %d] - ', size(pd.ydata{jj}));
+    end
+
+size(pd.ydata)
+size(pd.ydata{jj})
+size(pd.ydata{jj}(:))
+size(pd.ydata{jj}{:})
+
+    p(jj) = plot(pd.xdata{jj}, pd.ydata{jj}{:});
+    set(p(jj), 'LineWidth', properties.line.style.LineWidth);
+    set(p(jj), 'Color', cm.get_next(pd.ytypes{jj}{:}));
+
+    ynames{jj} = pd.ynames{jj}{1};
+
+    ymin{jj}   = min(vertcat(pd.ydata{jj}{:}));
+    ymax{jj}   = max(vertcat(pd.ydata{jj}{:}));
+
+    xmin{jj}   = min(pd.xdata{jj});
+    xmax{jj}   = max(pd.xdata{jj});
+
 end
 
 % Legend
-lh = legend(pd.ynames);
+lh = legend(ynames);
 
 % clc
-lims.xmin = min(pd.xdata); 
-lims.xmax = max(pd.xdata);
+lims.xmin = min(vertcat(xmin{:}));
+lims.xmax = min(vertcat(xmax{:}));
 lims.ymin = 0;
 lims.ymax = 1;
     
+
 % Check if custom property is specified
 loc_conf = struct();
 typename = fieldnames(pd.config);
@@ -52,10 +69,10 @@ if isfield(loc_conf, 'lims')
     lims.ymin = loc_conf.lims.ymin;
     lims.ymax = loc_conf.lims.ymax;
     
-elseif min(pd.ydata) < max(pd.ydata)
+elseif min(vertcat(ymin{:})) < max(vertcat(ymax{:}))
     
-    lims.ymin = min(pd.ydata);
-    lims.ymax = max(pd.ydata);
+    lims.ymin = min(vertcat(ymin{:}));
+    lims.ymax = max(vertcat(ymax{:}));
     
 end
 

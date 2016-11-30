@@ -22,8 +22,19 @@ if isunix
     [status,cmdout] = system(['cd ' folder '; rm -f *.pdf ;']);
 end
 
-% Make function list of all datatypes to be plotted
-plot_list = GetPlotList(summary_data, units, config, folder);
+mdata = size(summary_data, 2) == 1;
+
+if mdata
+
+    % Make function list of all datatypes to be plotted
+    plot_list = GetPlotList(summary_data, units, config, folder);
+
+else
+
+    % Make function list of all datatypes to be plotted
+    plot_list = GetPlotListMult(summary_data, units, config, folder);
+
+end
 
 % Make plots
 for pp = 1 : length(plot_list)

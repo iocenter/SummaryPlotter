@@ -16,6 +16,7 @@ classdef PlotData < handle
         units    % Contains the relevant part of the Units struct. E.g. Units().('metric')
 
         datatype % Specifies the type of data being plotted, e.g., FOPT
+        datatag  % Tag to differentiate b/e FIELD and WELL data entering function
         config   % Struct var containing custom plot configuration for each data type
     end
     
@@ -35,7 +36,7 @@ classdef PlotData < handle
         set_xlabel = set_xlabel(obj, name)
         set_ylabel = set_ylabel(obj, name)
         set_xdata = set_xdata(obj, data)
-        set_ydata = set_ydata(obj, data, names, types)
+        set_ydata = set_ydata(obj, data, names, types, datatag)
         set_config = set_config(obj, config, datatype)
         
     end

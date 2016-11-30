@@ -52,7 +52,7 @@ if ~isempty(varargin)
 
 	case 'test'
 
-		predef            = true;
+		predef             = true;
 		summary_file_path  = '/home/bellout/git/SummaryPlotter/test_data/ADG_5SPOT_gradient_with_DISCRETE.SIM.H5';
 		summary_name_path  = '/home/bellout/git/SummaryPlotter/test_data/ADG_5SPOT_gradient_with_DISCRETE.SIM';
 		folder_path        = '/home/bellout/git/SummaryPlotter/test_data/';
@@ -60,6 +60,31 @@ if ~isempty(varargin)
 		name               = 'ADG_5SPOT_gradient_with_DISCRETE.SIM';
 		ext                = 'H5';
 		target_folder      = '/home/bellout/git/SummaryPlotter/test_plots';
+
+	case '5spot_mjcase_s5'
+
+		predef             = true;
+		folder_path        = {[ '/home/bellout/Dropbox/SharedFolderMJ/WplcOpt_PSO_MJ'...
+							   '/studies/5spot_s5_uncertainty/models/ADGPRS/run0/' ], ...
+							  [ '/home/bellout/Dropbox/SharedFolderMJ/WplcOpt_PSO_MJ'...
+							   '/studies/5spot_s5_uncertainty/models/Eclipse/run0/' ]};
+							  % 
+		summary_file_path  = {[ folder_path{1} '/ADG_5SPOT_gradient_with_DISCRETE.SIM.H5' ], ...
+							  [ folder_path{2} '/ECL_5SPOT.UNSMRY' ]};
+							  % 
+		summary_name_path  = {[ folder_path{1} '/ADG_5SPOT_gradient_with_DISCRETE.SIM' ],...
+							  [ folder_path{2} '/ECL_5SPOT' ]};
+							  % 
+		file_name          = { 'ADG_5SPOT_gradient_with_DISCRETE.SIM.H5', ...
+							   'ECL_5SPOT.UNSMRY' };
+							  % 		
+		name               = { 'ADG_5SPOT_gradient_with_DISCRETE.SIM', ...
+		 					   'ECL_5SPOT' };
+		 					  % 
+		ext                = { 'H5', 'UNSMRY' };
+							  % 
+		target_folder      = [ '/home/bellout/Dropbox/SharedFolderMJ/WplcOpt_PSO_MJ'...
+									   '/studies/5spot_s5_uncertainty/models/plots' ];
 
 	end
 
@@ -95,8 +120,8 @@ end
 file_path = strcat(folder_path, file_name);
 name_path = strcat(folder_path, name);
 
-fprintf('%s selected.\n', file_path);
-fprintf('Extension is %s.\n', ext);
+fprintf('%s selected.\n', file_path{:});
+fprintf('Extension is %s.\n', ext{:});
 
 end
 

@@ -8,10 +8,21 @@ if data_dims(1) ~= 1
     return;
 end
 
-obj.xdata = data(obj.nzydata);
-output = true;
-return
 
+% Implement nonzero information
+obj.xdata = {};
+
+for jj = 1 : size(data,2)
+
+	xdata = data{jj};
+	nz_elements = obj.nzydata{jj}{:};
+
+	% obj.xdata{jj} = xdata(nz_elements);
+	obj.xdata{jj} = xdata;
 
 end
 
+output = true;
+return
+
+end
