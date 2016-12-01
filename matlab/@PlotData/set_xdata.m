@@ -8,15 +8,32 @@ if data_dims(1) ~= 1
     return;
 end
 
+if ~isstruct(data)
+
+    n_cols = 1;
+
+else
+    
+    n_cols = size(data, 2);
+
+end
 
 % Implement nonzero information
 obj.xdata = {};
 
-for jj = 1 : size(data,2)
+for jj = 1 : n_cols
 
-	xdata = data{jj};
+	if ~isstruct(data)
+
+		xdata = data;
+
+	else
+	    
+		xdata = data{jj};
+
+	end
+
 	nz_elements = obj.nzydata{jj}{:};
-
 	% obj.xdata{jj} = xdata(nz_elements);
 	obj.xdata{jj} = xdata;
 

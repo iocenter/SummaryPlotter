@@ -12,7 +12,7 @@ classdef PlotData < handle
         nzydata  % vector of nonzero ydata elements
         ysets    % Number of y data vectors
         ynames   % 1D cell array of data set names. E.g. FOPR, WBHP etc. Lenght must be equal to number of rows in ydata.
-        ytypes   % 1D cell array of fluid types for the data sets. E.g. oil, water, gas, fluid. Lenght must be equal to number of rows in ydata.
+        ytypes   % 1D cell array of fluid types for the data sets. E.g. oil, water, gas, fluid. Length must be equal to number of rows in ydata.
         units    % Contains the relevant part of the Units struct. E.g. Units().('metric')
 
         datatype % Specifies the type of data being plotted, e.g., FOPT

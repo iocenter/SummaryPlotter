@@ -21,14 +21,12 @@ custom_data_path = 'P07-02-Case-Ia-5spot-default';
 %     file_name, name, ext, target_folder] = ...
 %     GetFilePath('');
 
-
 % Get Path To Summary Data File
 % If file_name and folder_path not given, then it will open up a gui 
 % to find these
 % [summary_file_path, summary_name_path, folder_path, ...
 % remove:  
 %     file_name, name, ext] = GetFilePath(file_name, folder_path);
-
 
 %% Select unit set
 units = 'metric'; % alternative: 'field'
@@ -53,7 +51,6 @@ summary_data  = ReadSummaryData(summary_file_path, ...
 % then ask where the plots are to be stored
 % option 2: provide 'summary_data, units, config, target_folder'
 CreateBatchPlots(summary_data, units, config, target_folder);
-
 
 etime = toc(stime);
 fprintf('Total time used for plotting %3.1f minutes.', etime/60);

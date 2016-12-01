@@ -3,7 +3,7 @@ function CreatePlot( pd, folder, index, lims )
 %   The plot is saved in the input folder
 %   pd must be a PlotData object.
 
-debug_output = false;
+debug_output = true;
 
 properties = PlotProperties(); % Get properties struct
 cm = ColorMapper();
@@ -21,27 +21,40 @@ ynames = {};
 % Plotting
 hold on;
 
-for jj = 1 : size(pd.ydata,2)
+if ~iscell(pd.ydata)
+
+    fprintf('%s is NOT cell\n','pd.ydata');
+    n_cols = 1;
+
+else
+    
+    fprintf('%s IS cell\n','pd.ydata');    
+    n_cols = size(pd.ydata, 2);
+
+end
+    
+
+for jj = 1 : n_cols
 
     if debug_output
         fprintf('[%s] pd data: ', mfilename);
         fprintf('pd.xdata [%d %d] - ', size(pd.xdata{jj}));
-        fprintf('pd.ydata [%d %d] - ', size(pd.ydata{jj}));
+        fprintf('pd.ydata [%d %d]\n', size(pd.ydata{jj}));
+        fprintf('size(pd.ydata) [%d %d] - ', size(pd.ydata));
+        fprintf('size(pd.ydata{jj}) [%d %d] - ', size(pd.ydata{jj}));
+        fprintf('size(pd.ydata{jj}(:)) [%d %d]\n', size(pd.ydata{jj}(:)));
     end
 
-size(pd.ydata)
-size(pd.ydata{jj})
-size(pd.ydata{jj}(:))
-size(pd.ydata{jj}{:})
+        p(jj) = plot(pd.xdata{jj}', pd.ydata{jj});
+        p(jj) = plot(pd.xdata{jj}', pd.ydata{jj});        
 
-    p(jj) = plot(pd.xdata{jj}, pd.ydata{jj}{:});
     set(p(jj), 'LineWidth', properties.line.style.LineWidth);
     set(p(jj), 'Color', cm.get_next(pd.ytypes{jj}{:}));
 
     ynames{jj} = pd.ynames{jj}{1};
-
-    ymin{jj}   = min(vertcat(pd.ydata{jj}{:}));
-    ymax{jj}   = max(vertcat(pd.ydata{jj}{:}));
+        
+    ymin{jj}   = min(vertcat(pd.ydata{jj}));
+    ymax{jj}   = max(vertcat(pd.ydata{jj}));
 
     xmin{jj}   = min(pd.xdata{jj});
     xmax{jj}   = max(pd.xdata{jj});
@@ -56,7 +69,6 @@ lims.xmin = min(vertcat(xmin{:}));
 lims.xmax = min(vertcat(xmax{:}));
 lims.ymin = 0;
 lims.ymax = 1;
-    
 
 % Check if custom property is specified
 loc_conf = struct();
@@ -89,7 +101,7 @@ clear cm fh ah th xlh ylh lh;
 print_message(file_path);
 
     function print_message(file_path)
-        fprintf('Saved plot: %s\n', file_path);
+        fprintf('Saved plot: %s\n\n', file_path);
     end
 
 end

@@ -1,4 +1,4 @@
-function output = set_ydata( obj, summary_data, names, types, varargin )
+function output = set_ydata( obj, smry_data, names, types, varargin )
 %SET_YDATA Sets the ydata, ynames and ytypes fields
 
 nzydata = {};
@@ -8,15 +8,33 @@ ynames  = {};
 ytypes  = {};
 debug_output = true;
 
-for jj = 1 : size(summary_data, 2)
+if debug_output
+    fprintf('[%s] pd data: ', mfilename);
+    fprintf('size of smry_data: [%d %d] - ', size(smry_data));
+end
 
-    if ~isempty(varargin)
+if ~isstruct(smry_data)
 
-        data = summary_data{jj}(:)'
+    n_cols = 1;
+    fprintf('data is NOT struct\n');
+
+else
+    
+    n_cols = size(smry_data, 2);
+    fprintf('data is struct\n');
+
+end
+    
+
+for jj = 1 : n_cols
+
+    if ~isstruct(smry_data)
+
+        data = smry_data';
 
     else
-
-        data = summary_data{jj}.FIELD.(names{1});
+        
+        data = [smry_data{jj}.(varargin{1}).(names)]';
 
     end
 
@@ -29,21 +47,30 @@ for jj = 1 : size(summary_data, 2)
         types_size, names_size, data, names, types,...
         debug_output);
 
-    if isempty(find(data,1))
+    nzylength{1} = 1 : length(data);
+    ydata{jj} = data;
 
-        nzylength{1} = 1 : length(data);
-        ydata{jj}   = data(nzylength{1});
+    % if isempty(find(data,1))
 
-    else
+    %     fprintf([ '[isempty(find(data,1))] is TRUE, i.e.,' ...
+    %      'all componentns in data vector are zero!!!\n']);
+    %     nzylength{1} = 1 : length(data);
+    %     ydata{jj}   = { data(nzylength{1}) };
 
-        for kk = 1 : size(data,1)
+    % else
 
-            nzylength{kk} = find(data(kk,:));
-            ydata{jj}{kk} = data(nzylength{kk});
+    %     fprintf(['[isempty(find(data,1))] is FALSE, i.e.,' ...
+    %      'some componentns in data vector are nonzero\n']);
+    %     for kk = 1 : size(data,1)
 
-        end
+    %         nzylength{kk} = find(data(kk,:));
+    %         ydata{jj}(kk) = data(nzylength{kk});
 
-    end
+    %     end
+
+    % end
+
+    % ydata
 
     nzydata{jj} = nzylength;
     ysets{jj}   = data_size(1);
@@ -61,44 +88,54 @@ obj.ytypes  = ytypes;
 end
 
 
+% ------------------------------------------------------------
 function output = CheckYdataExceptions(data_size, ...
     types_size, names_size, data, names, types, ...
     debug_output)
 
-output  = true;
+    output  = true;
 
-if debug_output
-    fprintf('[%s] data sizes: ', mfilename);
-    fprintf('data_size [%d %d] - ', data_size);
-    fprintf('names_size [%d %d] - ', names_size);
-    fprintf('types_size [%d %d]\n\n', types_size);
-end
+    if debug_output
+        fprintf('[%s] data sizes: ', mfilename);
+        fprintf('data_size [%d %d] - ', data_size);
+        fprintf('names_size [%d %d] - ', names_size);
+        fprintf('types_size [%d %d] -- ', types_size);
+    end
 
-if names_size(2) ~= data_size(1) || types_size(2) ~= data_size(1)
-    fprintf('The number of columns in names and types must ');
-    fprintf('be the same as the number of rows in data.\n');
-    output = false;
-    return;
-elseif isempty(data) || isempty(names) || isempty(types)
-    fprintf('data, names and types must all be non-empty.\n');
-    output = false;
-    return;
-elseif ~iscell(names) || ~iscell(types) || iscell(data)
-    fprintf('names and types must be cell arrays; data must be an array\n.');
-    output = false;
-    return;
-end
+    if debug_output
 
-for i=1:types_size(2)
-    if ~strcmp(types{i}, 'oil') && ...
-            ~strcmp(types{i}, 'water') && ... 
-            ~strcmp(types{i}, 'gas') && ... 
-            ~strcmp(types{i}, 'liquid') && ...
-            ~strcmp(types{i}, 'pressure')
-        fprintf('All types must be either oil, water, gas, liquid or pressure.\n');
+        fprintf('name: [%s] ', names{:});
+
+    end
+    fprintf('\n');
+
+
+    if names_size(2) ~= data_size(1) || types_size(2) ~= data_size(1)
+        fprintf('The number of columns in names and types must ');
+        fprintf('be the same as the number of rows in data.\n');
+        output = false;
+        return;
+    elseif isempty(data) || isempty(names) || isempty(types)
+        fprintf('data, names and types must all be non-empty.\n');
+        output = false;
+        return;
+    elseif ~iscell(names) || ~iscell(types) || iscell(data)
+        fprintf('names and types must be cell arrays; data must be an array\n.');
         output = false;
         return;
     end
-end
+
+    for i=1:types_size(2)
+        if ~strcmp(types{i}, 'oil') && ...
+                ~strcmp(types{i}, 'water') && ... 
+                ~strcmp(types{i}, 'gas') && ... 
+                ~strcmp(types{i}, 'liquid') && ...
+                ~strcmp(types{i}, 'pressure')
+            fprintf(['All types must be either oil, water, '...
+                'gas, liquid or pressure.\n']);
+            output = false;
+            return;
+        end
+    end
 
 end

@@ -251,11 +251,11 @@ end
         datatype = 'WLPR';
 
         [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);  
+        get_data(summary_data, datatype);
 
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:well_indices
+        for i=well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Liquid Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -297,7 +297,7 @@ end
 
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:well_indices
+        for i=well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Water Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -318,7 +318,7 @@ end
         
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:well_indices
+        for i=well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Gas Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -339,7 +339,7 @@ end
 
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:well_indices
+        for i=well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Liquid Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -360,7 +360,7 @@ end
 
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:well_indices
+        for i=well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Oil Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
@@ -381,7 +381,7 @@ end
 
         lims.ymin = min(min(ydata_all_wells));
         lims.ymax = max(max(ydata_all_wells));
-        for i=1:well_indices
+        for i=well_indices
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Water Production Total, ', wellname), units);
             pd.set_xlabel('TIME');

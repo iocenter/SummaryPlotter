@@ -146,7 +146,7 @@ end
         pd = PlotData('Average Reservoir Pressure', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'pressure'});
+        pd.set_ydata(summary_data, {datatype}, {'pressure'},'FIELD');
         pd.set_xdata(xdata);
         pd.set_config(config, datatype);
         CreatePlot(pd, folder, index, lims);
