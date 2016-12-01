@@ -1,4 +1,4 @@
-function [ output_data ] = ReadAdgprsSummary( name )
+function [ output_data ] = ReadAdgprsSummary(name, ext)
 % READADGPRSSUMMARY Reads AD-GPRS *.H5 file using
 % MATLABs built-in functions
 
@@ -91,11 +91,11 @@ end
 
 % --------------------------------------------------------
 % Get file info
-fileinfo = hdf5info([name '.H5']);
+fileinfo = hdf5info([ name '.' ext ]);
 % Read the data of the WELLS states 
-WELLS_states = hdf5read(fileinfo.GroupHierarchy.Datasets( 24 ));
+WELLS_states = hdf5read(fileinfo.GroupHierarchy.Groups(1).Datasets( 8 ));
 % Read the time steps of the simulation
-time  = hdf5read(fileinfo.GroupHierarchy.Datasets( 22 ));
+time  = hdf5read(fileinfo.GroupHierarchy.Groups(2).Datasets( 6 ));
 dtime = [time( 1 ); diff( time )];
 
 % --------------------------------------------------------
@@ -126,6 +126,7 @@ clear WGPT WOPT WWPT
 
 [idtmax, iWELLmax] = size( WELLS_states );
 widx = ones(1, iWELLmax);
+nphases = size(WELLS_states(1,1).Data{4}.Data);
 
 for iWELL = 1 : iWELLmax,
 
@@ -144,11 +145,12 @@ for iWELL = 1 : iWELLmax,
                         
             if isempty(exception.cause)
                 
-                WBHP(idt, iWELL) = 0;
-                WGPR(idt, iWELL) = 0;
-                WOPR(idt, iWELL) = 0;
-                WWPR(idt, iWELL) = 0;
-                
+
+                    WBHP(idt, iWELL) = 0;
+                    WGPR(idt, iWELL) = 0;
+                    WOPR(idt, iWELL) = 0;
+                    WWPR(idt, iWELL) = 0;
+
                 daccept = 0;
                 
             end
@@ -157,11 +159,26 @@ for iWELL = 1 : iWELLmax,
             
         if daccept
             
-            WGPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 1 );
-            WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 2 );
-            WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 3 );
-            WLPR(idt, iWELL) = WOPR(idt, iWELL) + WWPR(idt, iWELL);
+            if nphases(2) == 3;
+            
+                WGPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 1 );
+                WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 2 );
+                WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 3 );
+                WLPR(idt, iWELL) = WOPR(idt, iWELL) + WWPR(idt, iWELL);
         
+            elseif nphases(2) == 2;
+
+                WGPR(idt, iWELL) = 0;
+                WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 1 );
+                WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 2 );
+                WLPR(idt, iWELL) = WOPR(idt, iWELL) + WWPR(idt, iWELL);
+
+            else
+
+                fprintf('%s\n', 'Number of phases wrong!')
+
+            end
+
         end
     
     end
@@ -202,7 +219,7 @@ WWCT = WWPR ./ (WOPR + WWPR);
 % ========================================================
 % Store variables
 
-WELLS.TIME = time; 
+WELLS.TIME = time;
 WELLS.WIDX = widx; 
 
 WELLS.WGPR = WGPR;
@@ -232,6 +249,8 @@ FIELD.FOPT = FOPT';
 FIELD.FWPT = FWPT';
 FIELD.FLPT = FLPT';
 
+FIELD.TIME = time';
+
 else
 
 FIELD.FGPR = FGPR;
@@ -243,6 +262,8 @@ FIELD.FGPT = FGPT;
 FIELD.FOPT = FOPT;
 FIELD.FWPT = FWPT;
 FIELD.FLPT = FLPT;
+
+FIELD.TIME = time;
 
 end
 
@@ -256,119 +277,124 @@ end
 % ========================================================
 % Loading cell data (pressures, saturations, etc
 
-% --------------------------------------------------------
-if debug_output
-    fprintf('LOADING CELL DATA FROM HDF5 FILE [USING hdf5read TWICE] ... \n')
-    fprintf('NOW: %s\n', datestr(now))
-    tic
-end
-
-active_cells       = hdf5read(fileinfo.GroupHierarchy.Datasets( 1 ));
-grid_prop_time     = hdf5read(fileinfo.GroupHierarchy.Datasets( 12 ));
-[idtmax, icellmax] = size(active_cells);
-
-% CELLS.active_cells   = active_cells;
-% CELLS.grid_prop_time = grid_prop_time;
-CELLS.idtmax       = idtmax;
-CELLS.icellmax     = icellmax;
-CELLS.iWELSmax     = iWELLmax;
-
-% --------------------------------------------------------
-if debug_output
-    ttoc = toc;
-    fprintf('DONE IN %3.1f SECS | %3.2f MINS \n', ttoc, ttoc/60)    
-end    
-
-%%
-% ========================================================
-% Extracting data for each timestep
-
-% --------------------------------------------------------
-if debug_output
-    fprintf('EXTRACTING STATE DATA (PRESSURES, SATURATIONS) FOR EACH TIMESTEP [FOR LOOP] ... \n')
-    fprintf('NOW: %s\n', datestr( now ))
-    tic
-end
-
-pres_index = 2;
-sgas_index = 5;
-soil_index = 6;
-
-ltime = length( WELLS.TIME );
-[r c1 c2] = size( grid_prop_time );
-
+grid_prop_time_present = false;
+    
 % PRE-ALLOCATE MEMORY
+ltime = length( WELLS.TIME );
 FPR  = zeros(ltime, 1);
 FPRH = FPR;
-SGAS = zeros(ltime, c2);
-SOIL = SGAS;
-SWAT = SGAS;
 
 % --------------------------------------------------------
-% Extract reservoir pressure, sgas, soil,, swat
+if grid_prop_time_present
 
-for tt = 1 : ltime
-
-    pressure = grid_prop_time(tt, pres_index, :);
-    pressure = squeeze( pressure );
-    FPR(tt) = mean( pressure );
-    
-    gsat = grid_prop_time(tt, sgas_index, :);
-    gsat = squeeze(gsat);
-    SGAS(tt,:) = gsat';
-
-    osat = grid_prop_time(tt, soil_index, :);
-    osat = squeeze(osat);
-    SOIL(tt,:) = osat';
-
-    % ------------------------------------------------------
-    % RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME    
-    hsat = osat + gsat;
-    FPRH(tt) = sum(hsat .* pressure) ./ sum(hsat);
-    
-    wsat = ones(length(osat), 1) - hsat;
-    SWAT(tt,:) = wsat';
-    
-    if ~rem(tt,50)
-
-       if ~rem(tt,50)
-
-           fprintf('.  %03.0f  \n',tt);
-
-       else
-
-           fprintf('.  %03.0f  ',tt);
-
-       end
-
-    else
-
-       fprintf('.');
-
+    if debug_output
+        fprintf('LOADING CELL DATA FROM HDF5 FILE [USING hdf5read TWICE] ... \n')
+        fprintf('NOW: %s\n', datestr(now))
+        tic
     end
-    
-    clear pressure gsat osat hsat wsat
-    
-end        
+
+    active_cells       = hdf5read(fileinfo.GroupHierarchy.Groups(1).Datasets( 1 ));
+    % grid_prop_time     = hdf5read(fileinfo.GroupHierarchy.Datasets( 12 ));
+    [idtmax, icellmax] = size(active_cells);
+
+    % CELLS.active_cells   = active_cells;
+    % CELLS.grid_prop_time = grid_prop_time;
+    CELLS.idtmax       = idtmax;
+    CELLS.icellmax     = icellmax;
+    CELLS.iWELSmax     = iWELLmax;
+
+    % --------------------------------------------------------
+    if debug_output
+        ttoc = toc;
+        fprintf('DONE IN %3.1f SECS | %3.2f MINS \n', ttoc, ttoc/60)    
+    end    
+
+    %%
+    % ========================================================
+    % Extracting data for each timestep
+
+    % --------------------------------------------------------
+    if debug_output
+        fprintf('EXTRACTING STATE DATA (PRESSURES, SATURATIONS) FOR EACH TIMESTEP [FOR LOOP] ... \n')
+        fprintf('NOW: %s\n', datestr( now ))
+        tic
+    end
+
+    pres_index = 2;
+    sgas_index = 5;
+    soil_index = 6;
+
+    [r c1 c2] = size( grid_prop_time );
+    % PRE-ALLOCATE MEMORY
+    SGAS = zeros(ltime, c2);
+    SOIL = SGAS;
+    SWAT = SGAS;
+
+    % --------------------------------------------------------
+    % Extract reservoir pressure, sgas, soil,, swat
+
+    for tt = 1 : ltime
+
+        pressure = grid_prop_time(tt, pres_index, :);
+        pressure = squeeze( pressure );
+        FP1R(tt) = mean( pressure );
+        
+        gsat = grid_prop_time(tt, sgas_index, :);
+        gsat = squeeze(gsat);
+        SGAS(tt,:) = gsat';
+
+        osat = grid_prop_time(tt, soil_index, :);
+        osat = squeeze(osat);
+        SOIL(tt,:) = osat';
+
+        % ------------------------------------------------------
+        % RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME    
+        hsat = osat + gsat;
+        FPRH(tt) = sum(hsat .* pressure) ./ sum(hsat);
+        
+        wsat = ones(length(osat), 1) - hsat;
+        SWAT(tt,:) = wsat';
+        
+        if ~rem(tt,50)
+
+           if ~rem(tt,50)
+
+               fprintf('.  %03.0f  \n',tt);
+
+           else
+
+               fprintf('.  %03.0f  ',tt);
+
+           end
+
+        else
+
+           fprintf('.');
+
+        end
+        
+        clear pressure gsat osat hsat wsat
+        
+    end        
+
+    CELLS.SGAS = SGAS;
+    CELLS.SOIL = SOIL;
+    CELLS.SWAT = SWAT;
+    CELLS.TIME = time;
+
+end % end if grid_prop_time_present
 
 if transpose_all
 
 FIELD.FPR  = FPR(:)';
 FIELD.FPRH = FPRH(:)'; % >> RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME    
-FIELD.TIME = time';
 
 else
-	
+    
 FIELD.FPR  = FPR(:);
 FIELD.FPRH = FPRH(:); % >> RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME    
-FIELD.TIME = time';
 
 end
-
-CELLS.SGAS = SGAS;
-CELLS.SOIL = SOIL;
-CELLS.SWAT = SWAT;
-CELLS.TIME = time;
 
 % --------------------------------------------------------
 if debug_output

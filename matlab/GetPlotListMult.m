@@ -17,7 +17,7 @@ mdata = size(summary_data, 2) == 1;
 
 if mdata
 
-    xdata = { summary_data.('FIELD').('TIME') };
+    xdata = { summary_data{1}.('FIELD').('TIME') };
 
 else
 

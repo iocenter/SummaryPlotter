@@ -30,6 +30,32 @@ config.WLPR = struct();
 
 switch configname
 
+	case 'P07-02-Case-Ia-5spot-default'
+
+		config.FPR.lims  = struct('ymin', 160, 'ymax', 200);
+		config.WBHP.lims = struct('ymin',  10, 'ymax', 200);
+		config.WWCT.lims = struct('ymin',   0, 'ymax',   1);
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 		config.FGPT.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.FOPT.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.FWPT.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.FLPT.lims = struct('ymin', 100, 'ymax', 200);
+% 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 		config.WGPT.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.WWPT.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.WOPT.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.WLPT.lims = struct('ymin', 100, 'ymax', 200);
+% 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 		config.FGPR.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.FOPR.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.FWPR.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.FLPR.lims = struct('ymin', 100, 'ymax', 200);
+% 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 		config.WGPR.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.WOPR.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.WWPR.lims = struct('ymin', 100, 'ymax', 200);
+% 		config.WLPR.lims = struct('ymin', 100, 'ymax', 200);
+
     case '5spot_Case'
         
 		config.FPR.lims  = struct('ymin', 160, 'ymax', 200);

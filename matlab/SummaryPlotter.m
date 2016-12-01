@@ -6,28 +6,29 @@
 clear all; close all; clc;
 stime = tic;
 
-%% Provide name of pre-defined summary data file
-% path to target_save_folder is also define here
-summary_data_file = 'test';
+%% Provide name of custom summary data file; can be set to empty, 
+% i.e., summary_data_file = '', in which case a GUI will appear
+% and you can set the path to summary data file manually using
+% the GUI
+custom_data_path = 'P07-02-Case-Ia-5spot-default';
 
-folder_path='/home/bellout/WORK-3/SCRATCH_RUNS-PROJECTS/scratch-P02_Constrained_CntrlOpt-OV/cntrlopt-sims-test/001/';
-file_name='GPRS_WECON_HALT_SN.UNSMRY';
-units='metric';
-output_dir= [folder_path '/figs'];
+% Comment this:
+[summary_file_path, summary_name_path, folder_path, ...
+    file_name, name, ext, target_folder] = ...
+    GetFilePath(custom_data_path);
+% or this:
+% [summary_file_path, summary_name_path, folder_path, ...
+%     file_name, name, ext, target_folder] = ...
+%     GetFilePath('');
 
-% If summary_data_file = '' then path to summary data file 
-% set through GUI in GetFilePath, if target_folder = '' from
-% GetFilePath, then later defined through GUI in CreateBatchPlots
 
 % Get Path To Summary Data File
 % If file_name and folder_path not given, then it will open up a gui 
 % to find these
-[summary_file_path, summary_name_path, folder_path, ...
-    file_name, name, ext] = GetFilePath(file_name, folder_path);
-    
-[summary_file_path, summary_name_path, folder_path, ...
-    file_name, name, ext, target_folder] = ...
-    GetFilePath(summary_data_file);
+% [summary_file_path, summary_name_path, folder_path, ...
+% remove:  
+%     file_name, name, ext] = GetFilePath(file_name, folder_path);
+
 
 %% Select unit set
 units = 'metric'; % alternative: 'field'
@@ -35,8 +36,9 @@ units = 'metric'; % alternative: 'field'
 %% Load custom plot config
 % If nonexisting, the config is set to default values
 % configname = '5spot_Case';
-configname = '5spot_4i1p_hz';
+% configname = '5spot_4i1p_hz';
 % configname = 'brugge_378';
+configname = 'P07-02-Case-Ia-5spot-default';
 config = ReadPlotConfig(configname);
 
 %% Read Summary Data
@@ -49,8 +51,8 @@ summary_data  = ReadSummaryData(summary_file_path, ...
 %% Create plots
 % option 1: provide only 'summary_data, units, config'; it will
 % then ask where the plots are to be stored
-% option 2: provide 'summary_data, units, config, output_dir'
-CreateBatchPlots(summary_data, units, config, output_dir);
+% option 2: provide 'summary_data, units, config, target_folder'
+CreateBatchPlots(summary_data, units, config, target_folder);
 
 
 etime = toc(stime);

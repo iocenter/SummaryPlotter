@@ -1,3 +1,4 @@
+% ------------------------------------------------------------
 function summary_data  = ReadSummaryData(...
     summary_file_path, summary_name_path, ext)
 
@@ -20,16 +21,14 @@ function summary_data  = ReadSummaryData(...
 
 %% Load/read data based on extension of file
 
-mdata = size(summary_name_path, 2) == 1;
+if iscell(summary_name_path) && size(summary_name_path, 2)==2
 
-if mdata
-
-    summary_data =  MakeSinglePlots(summary_file_path, ...
+    summary_data = MakeMultiplePlots(summary_file_path, ...
         ext, summary_name_path);
 
 else
-    
-    summary_data = MakeMultiplePlots(summary_file_path, ...
+
+    summary_data = MakeSinglePlots(summary_file_path, ...
         ext, summary_name_path);
 
 end 
@@ -37,14 +36,14 @@ end
 end % end function
 
 
-
+% ------------------------------------------------------------
 function summary_data = MakeMultiplePlots(...
     summary_file_path, ext, summary_name_path)
 
 summary_data = {};
 
-% Saved data
-if strcmp(ext, { 'mat' 'UNSMRY' })
+% Saved data in mat files vs ECL
+if strcmp(lower(ext), { 'mat' 'unsmry' })
 
     % {1} Read MRST files 
     fprintf('Reading %s.\n', ext{1});
@@ -54,8 +53,8 @@ if strcmp(ext, { 'mat' 'UNSMRY' })
     fprintf('Reading %s.\n', ext{2});
     summary_data{2} = ReadEclipseSummary(summary_name_path{2});    
     
-% Read Eclipse summary file
-elseif strcmp(ext, { 'H5' 'UNSMRY' })
+% Read ADGPRS and ECL data
+elseif strcmp(lower(ext), { 'h5' 'unsmry' })
 
     % {1} Read ADGPRS
     fprintf('Reading %s.\n', ext{1});
@@ -65,42 +64,55 @@ elseif strcmp(ext, { 'H5' 'UNSMRY' })
     fprintf('Reading %s.\n', ext{2});
     summary_data{2} = ReadEclipseSummary(summary_name_path{2});
 
+% Read ADGPRS X 2 data
+elseif strcmp(lower(ext), { 'h5' 'h5' })
+
+    % {1} Read ADGPRS: initial data
+    fprintf('Reading %s.\n', ext{1});
+    summary_data{1} = ReadAdgprsSummary(summary_name_path{1});
+
+    % {2} Read ADGPRS: optimized data
+    fprintf('Reading %s.\n', ext{2});
+    summary_data{2} = ReadAdgprsSummary(summary_name_path{2});
+
 % Catch exception    
 else
     fprintf([ 'File extensions/formats not '...
         'reconized. The allowed extensions ' ...
-        'are .mat, .UNSMRY and .H5\' ])
+        'are .mat, .UNSMRY and .H5\n' ])
 end
 
 end % end function
 
 
 
-
-function MakeSinglePlots(summary_file_path, ...
+% ------------------------------------------------------------
+function summary_data = MakeSinglePlots(summary_file_path, ...
     ext, summary_name_path)
+
+summary_data = {};
 
 % Saved data
 if strcmp(ext, 'mat')
     fprintf('Reading saved matlab variable (*.mat).\n');
-    summary_data = load(summary_file_path);
+    summary_data{1} = load(summary_file_path);
     
 % Read Eclipse summary file
-elseif strcmp(ext, 'UNSMRY')
+elseif strcmp(lower(ext), 'unsmry')
     
     % Read Eclipse summary files
-    summary_data = ReadEclipseSummary(summary_name_path);
+    summary_data{1} = ReadEclipseSummary(summary_name_path);
     
 % Read AD-GPRS summary file    
-elseif strcmp(ext, 'H5')
+elseif strcmp(lower(ext), 'h5') 
     
-    summary_data = ReadAdgprsSummary(summary_name_path);
+    summary_data{1} = ReadAdgprsSummary(summary_name_path, ext);
     
 % Catch exception    
 else
     fprintf([ 'File extensions/formats not '...
         'reconized. The allowed extensions ' ...
-        'are .mat, .UNSMRY and .H5\' ])
+        'are .mat, .UNSMRY and .H5\n' ])
 end
 
 end % end function
