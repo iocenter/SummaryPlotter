@@ -42,7 +42,7 @@ case 'P07-02-Case-Ia-5spot-default'
 	file_name          = '60X60-CG-1W-DO.vars.h5';
 	name               = '60X60-CG-1W-DO.vars';
 	ext                = 'h5';
-	target_folder      = [ root_dir '/production-profiles' ];;
+	target_folder      = [ root_dir '/production-profiles-test' ];;
 
 end
 

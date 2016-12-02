@@ -159,8 +159,9 @@ for iWELL = 1 : iWELLmax,
             
         if daccept
             
-            if nphases(2) == 3;
+            if nphases(2) == 3; 
             
+                % index 1: gas, index 2: oil, index 3: water 
                 WGPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 1 );
                 WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 2 );
                 WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 3 );
@@ -168,9 +169,10 @@ for iWELL = 1 : iWELLmax,
         
             elseif nphases(2) == 2;
 
+                % index 1: water, index 2: oil
                 WGPR(idt, iWELL) = 0;
-                WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 1 );
-                WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 2 );
+                WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 2 );
+                WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 1 );
                 WLPR(idt, iWELL) = WOPR(idt, iWELL) + WWPR(idt, iWELL);
 
             else

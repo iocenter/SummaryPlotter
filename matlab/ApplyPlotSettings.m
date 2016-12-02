@@ -28,7 +28,8 @@ set(th, 'FontSize', properties.font.title.FontSize, ...
 set(xlh, 'FontSize', properties.font.labels.FontSize, ...
          'FontWeight', properties.font.labels.FontWeight);
 set(ylh, 'FontSize', properties.font.labels.FontSize, ...
-         'FontWeight', properties.font.labels.FontWeight);
+         'FontWeight', properties.font.labels.FontWeight, 'interpreter', 'tex');
+
      
 % Legend settings =========================================================
 set(lh, 'FontSize', properties.font.legend.FontSize);

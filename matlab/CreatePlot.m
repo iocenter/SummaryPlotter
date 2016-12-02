@@ -62,7 +62,7 @@ for jj = 1 : n_cols
 end
 
 % Legend
-lh = legend(ynames);
+lh = legend(p, ynames);
 
 % clc
 lims.xmin = min(vertcat(xmin{:}));
@@ -90,6 +90,7 @@ end
 
 ApplyPlotSettings(fh, ah, th, xlh, ylh, lh, lims);
 
+% File name
 file_path = strcat(folder, '/', ... Folder path
    num2str(index), '_', regexprep(lower(pd.title), ' ', '_'), ... File name
    '.pdf'); % Extension
