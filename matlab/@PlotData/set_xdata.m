@@ -8,7 +8,7 @@ if data_dims(1) ~= 1
     return;
 end
 
-if ~isstruct(data)
+if ~iscell(data)
 
     n_cols = 1;
 
@@ -23,7 +23,7 @@ obj.xdata = {};
 
 for jj = 1 : n_cols
 
-	if ~isstruct(data)
+	if ~iscell(data)
 
 		xdata = data;
 

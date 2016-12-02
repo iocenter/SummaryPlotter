@@ -44,6 +44,21 @@ case 'P07-02-Case-Ia-5spot-default'
 	ext                = 'h5';
 	target_folder      = [ root_dir '/production-profiles-test' ];;
 
+case 'P07-02-Case-Ia-5spot-default-mult'
+
+	root_dir           = {'/home/bellout/WORK-3/SCRATCH_RUNS-PROJECTS/P07-02-Case-Ia-5spot-default' ...
+					      '/home/bellout/WORK-3/SCRATCH_RUNS-PROJECTS/P07-01-study-IJK-vert-well-ov-opt/60x60-CG-1w-do' }; 
+	summary_file_path  = { [ root_dir{1} '/60X60-CG-1W-DO.vars.h5' ] ...
+	                       [ root_dir{2} '/60x60-CG-1w-do/60X60-CG-1W-DO_Tue_Nov_22_20_50_36_2016.vars.h5' ] };
+	summary_name_path  = { [ root_dir{1} '/60X60-CG-1W-DO.vars' ] ...
+	                       [ root_dir{2} '/60x60-CG-1w-do/60X60-CG-1W-DO_Tue_Nov_22_20_50_36_2016.vars' ] };
+	folder_path        = { [ root_dir{1} '/' ] ...
+	                       [ root_dir{2} '/' ] };
+	file_name          = { '60X60-CG-1W-DO.vars.h5' '60X60-CG-1W-DO_Tue_Nov_22_20_50_36_2016.vars.h5' };
+	name               = { '60X60-CG-1W-DO.vars' '60X60-CG-1W-DO_Tue_Nov_22_20_50_36_2016.vars' };
+	ext                = { 'h5' 'h5' };
+	target_folder      = [ root_dir{1} '/production-profiles-test-mult' ];	
+
 end
 
 

@@ -13,28 +13,28 @@ if debug_output
     fprintf('size of smry_data: [%d %d] - ', size(smry_data));
 end
 
-if ~isstruct(smry_data)
+if ~iscell(smry_data)
 
     n_cols = 1;
-    fprintf('data is NOT struct\n');
+    fprintf('data is NOT cell\n');
 
 else
     
     n_cols = size(smry_data, 2);
-    fprintf('data is struct\n');
+    fprintf('data IS cell\n');
 
 end
     
 
 for jj = 1 : n_cols
 
-    if ~isstruct(smry_data)
+    if ~iscell(smry_data)
 
         data = smry_data';
 
     else
         
-        data = [smry_data{jj}.(varargin{1}).(names)]';
+        data = smry_data{jj};
 
     end
 

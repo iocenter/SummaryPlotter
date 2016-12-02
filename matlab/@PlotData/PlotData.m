@@ -37,7 +37,7 @@ classdef PlotData < handle
         set_ylabel = set_ylabel(obj, name)
         set_xdata = set_xdata(obj, data)
         set_ydata = set_ydata(obj, data, names, types, datatag)
-        set_config = set_config(obj, config, datatype)
+        set_config = set_config(obj, config, datatype, ydata, vargin)
         
     end
     

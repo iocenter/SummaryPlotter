@@ -13,19 +13,9 @@ function [ plot_list ] = GetPlotListMult(summary_data,...
 % OUTPUT
 % plot_list: list of datatypes to plot
 
-mdata = size(summary_data, 2) == 1;
-
-if mdata
-
-    xdata = { summary_data{1}.('FIELD').('TIME') };
-
-else
-
-    xdata = { ...
-    summary_data{1}.('FIELD').('TIME'), ...
-    summary_data{2}.('FIELD').('TIME') };
-
-end
+xdata = { ...
+summary_data{1}.('FIELD').('TIME'), ...
+summary_data{2}.('FIELD').('TIME') };
 
 plot_list = {};
 
@@ -128,358 +118,386 @@ if (size(summary_data{1}.FIELD.FLPT,1) > 0) ...
 end
 
 if (size(summary_data{1}.FIELD.FOPT,1) > 1) ...
-    && (size(summary_data{2}.FIELD.FOPT,1) > 1)
+    && (size(summary_data{2}.FIELD.FOPT,1) > 0)
     nm = @() fopt(7);
     plot_list = { plot_list{:} nm };
 end
 
 if (size(summary_data{1}.FIELD.FWPT,1) > 1) ...
-    && (size(summary_data{2}.FIELD.FWPT,1) > 1)
+    && (size(summary_data{2}.FIELD.FWPT,1) > 0)
     nm = @() fwpt(7);
     plot_list = { plot_list{:} nm };
 end
 
+    % =========================================================
+    % FIELD
 
     function fpr(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FPR';
         pd = PlotData('Average Reservoir Pressure', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'pressure'},'FIELD');
+
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'pressure'});
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
     function fgpr(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FGPR';
         pd = PlotData('Field Gas Production Rate', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
 
-        pd.set_ydata(summary_data, {datatype}, {'gas'});        
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'gas'});        
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
     function flpr(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FLPR';
         pd = PlotData('Field Liquid Production Rate', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'liquid'});
+
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'liquid'});
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
     function fopr(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FOPR';
         pd = PlotData('Field Oil Production Rate', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'oil'});
+
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'oil'});
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
     function fwpr(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FWPR';
         pd = PlotData('Field Water Production Rate', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'water'});
+
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'water'});
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
     function fgpt(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FGPT';
         pd = PlotData('Field Gas Production Total', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'gas'});
+
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'gas'});
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
     function flpt(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FLPT';
         pd = PlotData('Field Liquid Production Total', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'liquid'});
+
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'liquid'});
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
     function fopt(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FOPT';
         pd = PlotData('Field Oil Production Total', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'oil'});
+
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'oil'});
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
     function fwpt(index)
-        lims = struct; % Will be filled by CreatePlot function
         datatype = 'FWPT';
         pd = PlotData('Field Water Production Total', units);
         pd.set_xlabel('TIME');
         pd.set_ylabel(datatype);
-        pd.set_ydata(summary_data, {datatype}, {'water'});
+
+        smry_data{1} = [summary_data{1}.FIELD.(datatype)];
+        smry_data{2} = [summary_data{2}.FIELD.(datatype)];
+        pd.set_ydata(smry_data, {datatype}, {'water'});
         pd.set_xdata(xdata);
-        pd.set_config(config, datatype);
-        CreatePlot(pd, folder, index, lims);
+        pd.set_config(config, datatype, smry_data);
+        CreatePlot(pd, folder, index);
         clear pd;
     end
 
+    % =========================================================
+    % RATES
+
     function wgpr(index)
         datatype = 'WGPR';
-        
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);  
-    
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
 
         for i=well_indices{1}
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Gas Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'gas'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'gas'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, ydata_all_wells, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wlpr(index)
         datatype = 'WLPR';
-
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);  
 
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
-
-        for i=1:size(ydata_all_wells{1},2)
+        well_indices{1} = 1:size(ydata_all_wells{1},2);
+        for i=well_indices{1}
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Liquid Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
-            for jj = 1 : size(ydata_all_wells,2);
+            for jj = 1 : size(ydata_all_wells, 2);
                 data{jj} = ydata_all_wells{jj}(:,i)';
             end
 
             pd.set_ydata(data, {datatype}, {'liquid'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, data, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wopr(index)
         datatype = 'WOPR';
-        
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);  
         
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
-
         for i=well_indices{1}
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Oil Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'oil'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'oil'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, data, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wwpr(index)
         datatype = 'WWPR';
-
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);
-
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
 
         for i=1:size(ydata_all_wells{1},2)
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Water Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'water'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'water'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, data, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wgpt(index)
-        datatype = 'WGPT';
-        
+        datatype = 'WGPT';      
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);      
-        
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
 
         for i=well_indices{1}
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Gas Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'gas'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'gas'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, smry_data);
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wlpt(index)
         datatype = 'WLPT';
-
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);
-
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
 
         for i=1:size(ydata_all_wells{1},2)
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Liquid Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'liquid'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'liquid'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, data, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wopt(index)
         datatype = 'WOPT';
-        
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);
-
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
 
         for i=well_indices{1}
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Oil Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'oil'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'oil'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, data, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wwpt(index)
         datatype = 'WWPT';
-
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);
-
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
 
         for i=1:size(ydata_all_wells{1},2)
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Water Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'water'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'water'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, data, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wbhp(index)
         datatype = 'WBHP';
-
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);
-
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
 
         for i=1:size(ydata_all_wells{1},2)
             wellname = strcat('Well ', num2str(i));
             pd = PlotData(strcat('Well Bottom Hole Pressure, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'pressure'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'pressure'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, data, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wwct(index)
         datatype = 'WWCT';
-
         [well_indices, ydata_all_wells, welltype] = ...
         get_data(summary_data, datatype);      
-        
-        lims.ymin = min(min(vertcat(ydata_all_wells{:})));
-        lims.ymax = max(max(vertcat(ydata_all_wells{:})));
 
         for i=well_indices{1}
             wellname = strcat('Well ', num2str(i), ...
-                ' [', welltype{i}, ']');
+                ' [', welltype{1}{i}, ']');
             pd = PlotData(strcat('Well Water Cut, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
-            pd.set_ydata(ydata_all_wells(:,i)', {datatype}, {'water'});
+
+            for jj = 1 : size(ydata_all_wells, 2);
+                data{jj} = ydata_all_wells{jj}(:,i)';
+            end
+
+            pd.set_ydata(data, {datatype}, {'water'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype);
-            CreatePlot(pd, folder, index, lims);
+            pd.set_config(config, datatype, data, well_indices{1});
+            CreatePlot(pd, folder, index);
             clear pd;
         end
     end

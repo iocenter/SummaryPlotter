@@ -130,7 +130,9 @@ nphases = size(WELLS_states(1,1).Data{4}.Data);
 
 for iWELL = 1 : iWELLmax,
 
-    fprintf('Read rate, bhp for WELLS #%d\n',iWELL);
+    if debug_output
+        fprintf('Read rate, bhp for WELLS #%d\n',iWELL);
+    end
 
     % reading phase data into vectors
     for idt = 1 : idtmax,
@@ -188,7 +190,9 @@ for iWELL = 1 : iWELLmax,
 %     FIX 2
 %     WGPR(1, :) = WGPR(1, :) .* 0;
     
-    fprintf('Cumulative values for WELLS #%d\n',iWELL);
+    if debug_output
+        fprintf('Cumulative values for WELLS #%d\n',iWELL);
+    end
     WGPT(1:idtmax, iWELL) = cumsum(WGPR(1:idtmax, iWELL) .* dtime); %#ok<*SAGROW>
     WOPT(1:idtmax, iWELL) = cumsum(WOPR(1:idtmax, iWELL) .* dtime);
     WWPT(1:idtmax, iWELL) = cumsum(WWPR(1:idtmax, iWELL) .* dtime);
@@ -200,6 +204,34 @@ for iWELL = 1 : iWELLmax,
     end	
 
 end
+
+%%
+% ========================================================
+% Remove first value
+WGPR(1,:) = WGPR(2,:);
+WOPR(1,:) = WOPR(2,:);
+WWPR(1,:) = WWPR(2,:);
+WLPR(1,:) = WLPR(2,:);
+
+WBHP(1,:) = WBHP(2,:);
+WGPT(1,:) = WGPT(2,:);
+WOPT(1,:) = WOPT(2,:);
+WWPT(1,:) = WWPT(2,:);
+WLPT(1,:) = WLPT(2,:);
+
+%%
+% ========================================================
+% Absolute value of all rates
+WGPR = abs(WGPR);
+WOPR = abs(WOPR);
+WWPR = abs(WWPR);
+WLPR = abs(WLPR);
+
+WBHP = abs(WBHP);
+WGPT = abs(WGPT);
+WOPT = abs(WOPT);
+WWPT = abs(WWPT);
+WLPT = abs(WLPT);
 
 %%
 % ========================================================

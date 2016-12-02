@@ -62,12 +62,28 @@ else
 
 end
 
-% Output to user
-file_path = strcat(folder_path, file_name);
-name_path = strcat(folder_path, name);
+if iscell(summary_name_path) && size(summary_name_path, 2)==2
 
-fprintf('%s selected.\n', file_path);
-fprintf('Extension is %s.\n', ext);
+	for jj = 1 : size(summary_name_path, 2)
+
+		file_path{jj} = strcat(folder_path{jj}, file_name{jj});
+		name_path{jj} = strcat(folder_path{jj}, name{jj});
+
+	end
+	fprintf('%s selected. ', file_path{jj});
+	fprintf('Extension is %s.\n', ext{jj});
+
+else
+	
+	% Output to user
+	file_path = strcat(folder_path, file_name);
+	name_path = strcat(folder_path, name);
+	fprintf('%s selected. ', file_path);
+	fprintf('Extension is %s.\n', ext);
+
+end
+
+
 
 end
 

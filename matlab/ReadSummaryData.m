@@ -58,7 +58,7 @@ function summary_data = MakeMultiplePlots(...
 
         % {1} Read ADGPRS
         fprintf('Reading %s.\n', ext{1});
-        summary_data{1} = ReadAdgprsSummary(summary_name_path{1});
+        summary_data{1} = ReadAdgprsSummary(summary_name_path{1}),ext{1};
 
         % {2} Read Eclipse summary files
         fprintf('Reading %s.\n', ext{2});
@@ -69,11 +69,11 @@ function summary_data = MakeMultiplePlots(...
 
         % {1} Read ADGPRS: initial data
         fprintf('Reading %s.\n', ext{1});
-        summary_data{1} = ReadAdgprsSummary(summary_name_path{1});
+        summary_data{1} = ReadAdgprsSummary(summary_name_path{1},ext{1});
 
         % {2} Read ADGPRS: optimized data
         fprintf('Reading %s.\n', ext{2});
-        summary_data{2} = ReadAdgprsSummary(summary_name_path{2});
+        summary_data{2} = ReadAdgprsSummary(summary_name_path{2},ext{2});
 
     % Catch exception    
     else
@@ -83,8 +83,6 @@ function summary_data = MakeMultiplePlots(...
     end
 
 end % end function
-
-
 
 % ------------------------------------------------------------
 function summary_data = MakeSinglePlots(summary_file_path, ...

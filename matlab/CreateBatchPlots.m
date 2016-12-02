@@ -19,20 +19,20 @@ end
 
 % Delete old plots in current target folder
 if isunix 
-    [status,cmdout] = system(['cd ' folder '; rm -f *.pdf ;']);
+    [status, cmdout] = system(['cd ' folder '; rm -f *.pdf ;']);
 end
 
-mdata = size(summary_data, 2) == 1;
-
-if mdata
+if iscell(summary_data) && size(summary_data, 2)==2
 
     % Make function list of all datatypes to be plotted
-    plot_list = GetPlotList(summary_data, units, config, folder);
+    fprintf('Running: %s\n', 'GetPlotListMult') 
+    plot_list = GetPlotListMult(summary_data, units, config, folder);
 
 else
 
     % Make function list of all datatypes to be plotted
-    plot_list = GetPlotListMult(summary_data, units, config, folder);
+    fprintf('Running: %s\n', 'GetPlotList') 
+    plot_list = GetPlotList(summary_data, units, config, folder);
 
 end
 

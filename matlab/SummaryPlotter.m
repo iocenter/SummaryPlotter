@@ -10,7 +10,7 @@ stime = tic;
 % i.e., summary_data_file = '', in which case a GUI will appear
 % and you can set the path to summary data file manually using
 % the GUI
-custom_data_path = 'P07-02-Case-Ia-5spot-default';
+custom_data_path = 'P07-02-Case-Ia-5spot-default-mult';
 
 % Comment this:
 [summary_file_path, summary_name_path, folder_path, ...
@@ -32,12 +32,7 @@ custom_data_path = 'P07-02-Case-Ia-5spot-default';
 units = 'metric'; % alternative: 'field'
 
 %% Load custom plot config
-% If nonexisting, the config is set to default values
-% configname = '5spot_Case';
-% configname = '5spot_4i1p_hz';
-% configname = 'brugge_378';
-configname = 'P07-02-Case-Ia-5spot-default';
-config = ReadPlotConfig(configname);
+config = ReadPlotConfig(custom_data_path);
 
 %% Read Summary Data
 % Uses the _ReadEcliseSummary_ or _ReadAdgprsSummary_ functions to read

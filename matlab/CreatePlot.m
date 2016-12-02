@@ -1,4 +1,4 @@
-function CreatePlot( pd, folder, index, lims )
+function CreatePlot( pd, folder, index )
 %CREATEPLOT Creates a plot from a PlotData object
 %   The plot is saved in the input folder
 %   pd must be a PlotData object.
@@ -27,12 +27,11 @@ if ~iscell(pd.ydata)
     n_cols = 1;
 
 else
-    
-    fprintf('%s IS cell\n','pd.ydata');    
+
+    fprintf('%s IS cell\n','pd.ydata');
     n_cols = size(pd.ydata, 2);
 
 end
-    
 
 for jj = 1 : n_cols
 
@@ -45,14 +44,13 @@ for jj = 1 : n_cols
         fprintf('size(pd.ydata{jj}(:)) [%d %d]\n', size(pd.ydata{jj}(:)));
     end
 
-        p(jj) = plot(pd.xdata{jj}', pd.ydata{jj});
-        p(jj) = plot(pd.xdata{jj}', pd.ydata{jj});        
+    p(jj) = plot(pd.xdata{jj}', pd.ydata{jj});
 
     set(p(jj), 'LineWidth', properties.line.style.LineWidth);
     set(p(jj), 'Color', cm.get_next(pd.ytypes{jj}{:}));
 
     ynames{jj} = pd.ynames{jj}{1};
-        
+
     ymin{jj}   = min(vertcat(pd.ydata{jj}));
     ymax{jj}   = max(vertcat(pd.ydata{jj}));
 
@@ -64,6 +62,12 @@ end
 % Legend
 lh = legend(p, ynames);
 
+
+% =========================================================
+% LIMITS
+
+if ~iscell(pd.ydata)
+            
 % clc
 lims.xmin = min(vertcat(xmin{:}));
 lims.xmax = min(vertcat(xmax{:}));
@@ -76,17 +80,48 @@ typename = fieldnames(pd.config);
 evalIn = [ 'loc_conf = pd.config.' typename{1} ';' ];
 eval(evalIn);
 
-if isfield(loc_conf, 'lims')
+if isfield(loc_conf, 'lims') & isfield(loc_conf.lims, 'ysc_eq')
 
-    lims.ymin = loc_conf.lims.ymin;
-    lims.ymax = loc_conf.lims.ymax;
-    
+    if loc_conf.lims.ysc_eq & ...
+        (loc_conf.lims.ymin_all < loc_conf.lims.ymax_all)
+
+
+
+            % Apply found upper and lower limits for all wells
+            lims.ymin = loc_conf.lims.ymin_all;
+            lims.ymax = loc_conf.lims.ymax_all;
+
+        else
+
+
+            
+        end
+
+    else
+
+        % revert to custom config for limits
+        lims.ymin = loc_conf.lims.ymin;
+        lims.ymax = loc_conf.lims.ymax;
+
+    end
+
 elseif min(vertcat(ymin{:})) < max(vertcat(ymax{:}))
-    
+
     lims.ymin = min(vertcat(ymin{:}));
     lims.ymax = max(vertcat(ymax{:}));
-    
+
 end
+
+% Some slight rescaling
+if lims.ymin < lims.ymax*.1
+    lims.ymin = 0;
+else
+    lims.ymin = lims.ymin*.95;
+end
+lims.ymax = lims.ymax*1.05;
+
+lims
+
 
 ApplyPlotSettings(fh, ah, th, xlh, ylh, lh, lims);
 
