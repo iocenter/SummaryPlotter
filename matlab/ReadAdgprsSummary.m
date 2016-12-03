@@ -2,31 +2,31 @@ function [ output_data ] = ReadAdgprsSummary(name, ext)
 % READADGPRSSUMMARY Reads AD-GPRS *.H5 file using
 % MATLABs built-in functions
 
-%   Uses MATLAB functions: hdf5info and hdf5read 
+%   Uses MATLAB functions: hdf5info and hdf5read
 %   to read ADGPRS HDF5 output data file
-% 
+%
 %   Selects subset of data fields from raw data, and
-%   reorganizes these fields into a matlab structure 
+%   reorganizes these fields into a matlab structure
 %   variable
 %
 %   Input is the ADGPRS file name without extension
-% 
-%   Output is a structure array (output_data) where 
-%   each field contains one datatype (FOPT, FWPT, ..., 
-%   WWPT, etc). 
-% 
-%   The structure of the output data variable is as 
+%
+%   Output is a structure array (output_data) where
+%   each field contains one datatype (FOPT, FWPT, ...,
+%   WWPT, etc).
+%
+%   The structure of the output data variable is as
 %   follows:
-% 
-% output_data = 
+%
+% output_data =
 %          WELLS: [1x1 struct]
 %          FIELD: [1x1 struct]
 %          CELLS: [1x1 struct]
-% 
+%
 %   Each substructure is given as:
-% 
-% output_data.WELLS = 
-% 
+%
+% output_data.WELLS =
+%
 %     TIME: [tstep_x_1 double]
 %     WIDX: [0 0 0 0 1]
 %     WGPR: [tstep_x_nwells double]
@@ -39,9 +39,9 @@ function [ output_data ] = ReadAdgprsSummary(name, ext)
 %     WWPT: [tstep_x_nwells double]
 %     WLPT: [tstep_x_nwells double]
 %     WWCT: [tstep_x_nwells double]
-% 
-% output_data.FIELD = 
-% 
+%
+% output_data.FIELD =
+%
 %     FGPR: [1_x_tstep double]
 %     FOPR: [1_x_tstep double]
 %     FWPR: [1_x_tstep double]
@@ -53,9 +53,9 @@ function [ output_data ] = ReadAdgprsSummary(name, ext)
 %      FPR: [1_x_tstep double]
 %     FPRH: [1_x_tstep double]
 %     TIME: [1_x_tstep double]
-% 
-% output_data.CELLS = 
-% 
+%
+% output_data.CELLS =
+%
 %       idtmax: nsteps
 %     icellmax: ncells
 %     iWELSmax: nwells
@@ -63,16 +63,16 @@ function [ output_data ] = ReadAdgprsSummary(name, ext)
 %         SOIL: [nsteps_x_ncells double]
 %         SWAT: [nsteps_x_ncells double]
 %         TIME: [nsteps_x1 double]
-% 
+%
 %    with dimensions:
-% 
-%      tstep: number of timestep 
-%      nwells: number of wells 
+%
+%      tstep: number of timestep
+%      nwells: number of wells
 %      ncells: number of grid cells in reservoir
-% 
-%    Example: 
+%
+%    Example:
 %    summary_data = ReadEclipseSummary(ADG_5SPOT_gradient_with_DISCRETE);
-% 
+%
 %%
 % ========================================================
 % Read AD-GPRS output data using h5 libraries
@@ -92,7 +92,7 @@ end
 % --------------------------------------------------------
 % Get file info
 fileinfo = hdf5info([ name '.' ext ]);
-% Read the data of the WELLS states 
+% Read the data of the WELLS states
 WELLS_states = hdf5read(fileinfo.GroupHierarchy.Groups(1).Datasets( 8 ));
 % Read the time steps of the simulation
 time  = hdf5read(fileinfo.GroupHierarchy.Groups(2).Datasets( 6 ));
@@ -136,17 +136,16 @@ for iWELL = 1 : iWELLmax,
 
     % reading phase data into vectors
     for idt = 1 : idtmax,
-        
+
         daccept = 1;
-        
+
         try
-            
+
             WBHP(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 1 }.Data( 1 );
-            
+
         catch exception
-                        
+
             if isempty(exception.cause)
-                
 
                     WBHP(idt, iWELL) = 0;
                     WGPR(idt, iWELL) = 0;
@@ -154,27 +153,28 @@ for iWELL = 1 : iWELLmax,
                     WWPR(idt, iWELL) = 0;
 
                 daccept = 0;
-                
+
             end
 
         end
-            
+
         if daccept
-            
-            if nphases(2) == 3; 
-            
-                % index 1: gas, index 2: oil, index 3: water 
-                WGPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 1 );
-                WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 2 );
-                WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 3 );
+
+            if nphases(2) == 3;
+
+                % index 1: gas, index 2: oil, index 3: water
+                % Data{ 4 }: in.res, Data{ 5 }: AtSC
+                WGPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 5 }.Data( 1 );
+                WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 5 }.Data( 2 );
+                WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 5 }.Data( 3 );
                 WLPR(idt, iWELL) = WOPR(idt, iWELL) + WWPR(idt, iWELL);
-        
+
             elseif nphases(2) == 2;
 
                 % index 1: water, index 2: oil
                 WGPR(idt, iWELL) = 0;
-                WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 2 );
-                WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 4 }.Data( 1 );
+                WOPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 5 }.Data( 2 );
+                WWPR(idt, iWELL) = WELLS_states(idt, iWELL).Data{ 5 }.Data( 1 );
                 WLPR(idt, iWELL) = WOPR(idt, iWELL) + WWPR(idt, iWELL);
 
             else
@@ -184,12 +184,12 @@ for iWELL = 1 : iWELLmax,
             end
 
         end
-    
+
     end
-   
+
 %     FIX 2
 %     WGPR(1, :) = WGPR(1, :) .* 0;
-    
+
     if debug_output
         fprintf('Cumulative values for WELLS #%d\n',iWELL);
     end
@@ -197,27 +197,13 @@ for iWELL = 1 : iWELLmax,
     WOPT(1:idtmax, iWELL) = cumsum(WOPR(1:idtmax, iWELL) .* dtime);
     WWPT(1:idtmax, iWELL) = cumsum(WWPR(1:idtmax, iWELL) .* dtime);
     WLPT(1:idtmax, iWELL) = cumsum(WLPR(1:idtmax, iWELL) .* dtime);
-   
-    % Set injector/producer indices based on WOPR and WWPR values    
+
+    % Set injector/producer indices based on WOPR and WWPR values
     if sum(WOPR(:, iWELL))<1e-3 && sum(WWPR(:, iWELL))<1e-3
 		widx(1, iWELL) = 0;
-    end	
+    end
 
 end
-
-%%
-% ========================================================
-% Remove first value
-WGPR(1,:) = WGPR(2,:);
-WOPR(1,:) = WOPR(2,:);
-WWPR(1,:) = WWPR(2,:);
-WLPR(1,:) = WLPR(2,:);
-
-WBHP(1,:) = WBHP(2,:);
-WGPT(1,:) = WGPT(2,:);
-WOPT(1,:) = WOPT(2,:);
-WWPT(1,:) = WWPT(2,:);
-WLPT(1,:) = WLPT(2,:);
 
 %%
 % ========================================================
@@ -232,6 +218,21 @@ WGPT = abs(WGPT);
 WOPT = abs(WOPT);
 WWPT = abs(WWPT);
 WLPT = abs(WLPT);
+
+%%
+% ========================================================
+% Remove first value
+tidx = time < 3;
+
+WGPR=meanDataOutliers(WGPR,tidx);
+WOPR=meanDataOutliers(WOPR,tidx);
+WWPR=meanDataOutliers(WWPR,tidx);
+WLPR=meanDataOutliers(WLPR,tidx);
+WBHP=meanDataOutliers(WBHP,tidx);
+WGPT=meanDataOutliers(WGPT,tidx);
+WOPT=meanDataOutliers(WOPT,tidx);
+WWPT=meanDataOutliers(WWPT,tidx);
+WLPT=meanDataOutliers(WLPT,tidx);
 
 %%
 % ========================================================
@@ -254,7 +255,7 @@ WWCT = WWPR ./ (WOPR + WWPR);
 % Store variables
 
 WELLS.TIME = time;
-WELLS.WIDX = widx; 
+WELLS.WIDX = widx;
 
 WELLS.WGPR = WGPR;
 WELLS.WOPR = WOPR;
@@ -304,7 +305,7 @@ end
 % --------------------------------------------------------
 if debug_output
     ttoc = toc;
-    fprintf('DONE IN %3.1f SECS | %3.2f MINS \n', ttoc, ttoc/60)    
+    fprintf('DONE IN %3.1f SECS | %3.2f MINS \n', ttoc, ttoc/60)
 end
 
 %%
@@ -312,7 +313,7 @@ end
 % Loading cell data (pressures, saturations, etc
 
 grid_prop_time_present = false;
-    
+
 % PRE-ALLOCATE MEMORY
 ltime = length( WELLS.TIME );
 FPR  = zeros(ltime, 1);
@@ -340,8 +341,8 @@ if grid_prop_time_present
     % --------------------------------------------------------
     if debug_output
         ttoc = toc;
-        fprintf('DONE IN %3.1f SECS | %3.2f MINS \n', ttoc, ttoc/60)    
-    end    
+        fprintf('DONE IN %3.1f SECS | %3.2f MINS \n', ttoc, ttoc/60)
+    end
 
     %%
     % ========================================================
@@ -372,7 +373,7 @@ if grid_prop_time_present
         pressure = grid_prop_time(tt, pres_index, :);
         pressure = squeeze( pressure );
         FP1R(tt) = mean( pressure );
-        
+
         gsat = grid_prop_time(tt, sgas_index, :);
         gsat = squeeze(gsat);
         SGAS(tt,:) = gsat';
@@ -382,13 +383,13 @@ if grid_prop_time_present
         SOIL(tt,:) = osat';
 
         % ------------------------------------------------------
-        % RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME    
+        % RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME
         hsat = osat + gsat;
         FPRH(tt) = sum(hsat .* pressure) ./ sum(hsat);
-        
+
         wsat = ones(length(osat), 1) - hsat;
         SWAT(tt,:) = wsat';
-        
+
         if ~rem(tt,50)
 
            if ~rem(tt,50)
@@ -406,10 +407,10 @@ if grid_prop_time_present
            fprintf('.');
 
         end
-        
+
         clear pressure gsat osat hsat wsat
-        
-    end        
+
+    end
 
     CELLS.SGAS = SGAS;
     CELLS.SOIL = SOIL;
@@ -421,19 +422,19 @@ end % end if grid_prop_time_present
 if transpose_all
 
 FIELD.FPR  = FPR(:)';
-FIELD.FPRH = FPRH(:)'; % >> RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME    
+FIELD.FPRH = FPRH(:)'; % >> RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME
 
 else
-    
+
 FIELD.FPR  = FPR(:);
-FIELD.FPRH = FPRH(:); % >> RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME    
+FIELD.FPRH = FPRH(:); % >> RESERVOIR PRESSURE WEIGHTED BY HYDROCARBON PORE VOLUME
 
 end
 
 % --------------------------------------------------------
 if debug_output
     ttoc = toc;
-    fprintf('DONE IN %3.1f SECS | %3.2f MINS \n', ttoc, ttoc/60)    
+    fprintf('DONE IN %3.1f SECS | %3.2f MINS \n', ttoc, ttoc/60)
 end
 
 %%
@@ -441,17 +442,17 @@ end
 % Size of variables / structures
 
 if debug_output
-    
+
 STRUCT = 'WELLS'; sz = whos(STRUCT);
-fprintf(['SIZE OF --' STRUCT '-- STRUCTURE IS %6.0f KB | %5.1f MB' ... 
+fprintf(['SIZE OF --' STRUCT '-- STRUCTURE IS %6.0f KB | %5.1f MB' ...
     ' | %3.1f GB \n'], sz.bytes / 1e3, sz.bytes / 1e6, sz.bytes / 1e9 );
 
 STRUCT = 'FIELD'; sz = whos(STRUCT);
-fprintf(['SIZE OF --' STRUCT '-- STRUCTURE IS %6.0f KB | %5.1f MB' ... 
+fprintf(['SIZE OF --' STRUCT '-- STRUCTURE IS %6.0f KB | %5.1f MB' ...
     ' | %3.1f GB \n'], sz.bytes / 1e3, sz.bytes / 1e6, sz.bytes / 1e9 );
 
 STRUCT = 'CELLS'; sz = whos(STRUCT);
-fprintf(['SIZE OF --' STRUCT '-- STRUCTURE IS %6.0f KB | %5.1f MB' ... 
+fprintf(['SIZE OF --' STRUCT '-- STRUCTURE IS %6.0f KB | %5.1f MB' ...
     ' | %3.1f GB \n'], sz.bytes / 1e3, sz.bytes / 1e6, sz.bytes / 1e9 );
 
 end
@@ -461,19 +462,19 @@ end
 % Save read data
 
 if debug_output
-    
+
     fprintf('SAVING DATA ... \n')
     fprintf('NOW: %s\n', datestr(now))
     tic
 
 end
-    
+
 if nargout > 0
-   
+
     output_data.WELLS = WELLS;
     output_data.FIELD = FIELD;
     output_data.CELLS = CELLS;
-    
+
 end
 
 if debug_output
@@ -484,8 +485,30 @@ end
 if save_file
 	fn = [name '.mat'];
     save(fn, 'WELLS', 'FIELD', 'CELLS');
-    fprintf('FILE SAVED IN %s\n', fn);    
+    fprintf('FILE SAVED IN %s\n', fn);
 end
 
 end
 
+function A=meanDataOutliers(A,tidx)
+
+aa = find(tidx);
+A2 = A;
+
+for ii = aa(end) : -1 : 2
+
+    for icols = 1 : size(A,2)
+
+        if max(A(aa,icols)) > median(A(:,icols))
+
+            A2(ii-1,icols) = A2(ii,icols);
+
+        end
+
+    end    
+
+end
+
+A = A2;
+
+end

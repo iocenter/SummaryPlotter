@@ -18,6 +18,7 @@ classdef PlotData < handle
         datatype % Specifies the type of data being plotted, e.g., FOPT
         datatag  % Tag to differentiate b/e FIELD and WELL data entering function
         config   % Struct var containing custom plot configuration for each data type
+        iwell    % Current well index for multiple well plots
     end
     
     properties (SetAccess = public, GetAccess = public)
@@ -35,9 +36,9 @@ classdef PlotData < handle
         end
         set_xlabel = set_xlabel(obj, name)
         set_ylabel = set_ylabel(obj, name)
-        set_xdata = set_xdata(obj, data)
-        set_ydata = set_ydata(obj, data, names, types, datatag)
-        set_config = set_config(obj, config, datatype, ydata, vargin)
+        set_xdata  = set_xdata(obj, data)
+        set_ydata  = set_ydata(obj, data, names, types, datatag)
+        set_config = set_config(obj, config, datatype, ydata, iwell, vargin)
         
     end
     

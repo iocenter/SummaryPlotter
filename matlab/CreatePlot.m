@@ -46,10 +46,16 @@ for jj = 1 : n_cols
 
     p(jj) = plot(pd.xdata{jj}', pd.ydata{jj});
 
+% properties.line.style.LineStyle{j
+
+    LineStyle = {'-', ':' };
+
     set(p(jj), 'LineWidth', properties.line.style.LineWidth);
     set(p(jj), 'Color', cm.get_next(pd.ytypes{jj}{:}));
+    set(p(jj), 'LineStyle', LineStyle{jj} );
 
-    ynames{jj} = pd.ynames{jj}{1};
+    if jj==2; txtmod = 'opt'; else txtmod=''; end
+    ynames{jj} = [ pd.ynames{jj}{1} txtmod ];
 
     ymin{jj}   = min(vertcat(pd.ydata{jj}));
     ymax{jj}   = max(vertcat(pd.ydata{jj}));
@@ -66,26 +72,24 @@ lh = legend(p, ynames);
 % =========================================================
 % LIMITS
 
-if ~iscell(pd.ydata)
-            
 % clc
 lims.xmin = min(vertcat(xmin{:}));
 lims.xmax = min(vertcat(xmax{:}));
 lims.ymin = 0;
 lims.ymax = 1;
 
-% Check if custom property is specified
-loc_conf = struct();
-typename = fieldnames(pd.config);
-evalIn = [ 'loc_conf = pd.config.' typename{1} ';' ];
-eval(evalIn);
+if ~iscell(pd.ydata)
 
-if isfield(loc_conf, 'lims') & isfield(loc_conf.lims, 'ysc_eq')
+    % Check if custom property is specified
+    loc_conf = struct();
+    typename = fieldnames(pd.config);
+    evalIn = [ 'loc_conf = pd.config.' typename{1} ';' ];
+    eval(evalIn);
 
-    if loc_conf.lims.ysc_eq & ...
-        (loc_conf.lims.ymin_all < loc_conf.lims.ymax_all)
+    if isfield(loc_conf, 'lims') & isfield(loc_conf.lims, 'ysc_eq')
 
-
+        if loc_conf.lims.ysc_eq & ...
+            (loc_conf.lims.ymin_all < loc_conf.lims.ymax_all)
 
             % Apply found upper and lower limits for all wells
             lims.ymin = loc_conf.lims.ymin_all;
@@ -93,22 +97,53 @@ if isfield(loc_conf, 'lims') & isfield(loc_conf.lims, 'ysc_eq')
 
         else
 
+            % revert to custom config for limits
+            lims.ymin = loc_conf.lims.ymin;
+            lims.ymax = loc_conf.lims.ymax;
 
-            
         end
 
-    else
+    elseif min(vertcat(ymin{:})) < max(vertcat(ymax{:}))
 
-        % revert to custom config for limits
-        lims.ymin = loc_conf.lims.ymin;
-        lims.ymax = loc_conf.lims.ymax;
+        lims.ymin = min(vertcat(ymin{:}));
+        lims.ymax = max(vertcat(ymax{:}));
 
     end
 
-elseif min(vertcat(ymin{:})) < max(vertcat(ymax{:}))
+else
 
-    lims.ymin = min(vertcat(ymin{:}));
-    lims.ymax = max(vertcat(ymax{:}));
+    % Check if custom property is specified
+    loc_conf_A = struct();
+    loc_conf_B = struct();
+    typename = fieldnames(pd.config);
+    evalIn = [ 'loc_conf_A = pd.config.' typename{1} ';' ];
+    eval(evalIn);
+    evalIn = [ 'loc_conf_B = pd.config.' typename{2} ';' ];
+    eval(evalIn);
+
+    % loc_conf_A.lims
+    % loc_conf_B.lims
+
+    if isfield(loc_conf_A, 'lims') & isfield(loc_conf_B, 'lims') & ...
+       isfield(loc_conf_A.lims, 'ysc_eq') & isfield(loc_conf_B.lims, 'ysc_eq')
+
+        if loc_conf_A.lims.ysc_eq & loc_conf_B.lims.ysc_eq & ...
+            (loc_conf_A.lims.ymin_all < loc_conf_A.lims.ymax_all) & ...
+            (loc_conf_B.lims.ymin_all < loc_conf_B.lims.ymax_all)
+
+            % Apply found upper and lower limits for all wells
+            lims.ymin = min(loc_conf_A.lims.ymin_all,loc_conf_B.lims.ymin_all);
+            lims.ymax = max(loc_conf_A.lims.ymax_all,loc_conf_B.lims.ymax_all);            
+
+        else
+
+            % revert to custom config for limits
+            lims.ymin = min(loc_conf_A.lims.ymin,loc_conf_B.lims.ymin);
+            lims.ymax = max(loc_conf_A.lims.ymax,loc_conf_B.lims.ymax);
+
+        end
+
+    end
 
 end
 
@@ -119,9 +154,6 @@ else
     lims.ymin = lims.ymin*.95;
 end
 lims.ymax = lims.ymax*1.05;
-
-lims
-
 
 ApplyPlotSettings(fh, ah, th, xlh, ylh, lh, lims);
 

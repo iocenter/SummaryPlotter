@@ -1,15 +1,15 @@
 function [ plot_list ] = GetPlotListMult(summary_data,...
 	units, config, folder)
-%% GETPLOTLIST Checks all plot data and returns a 
-% list of datatypes to can be plotted as a cell 
+%% GETPLOTLIST Checks all plot data and returns a
+% list of datatypes to can be plotted as a cell
 % array of corresponding function handles
-% 
+%
 % INPUT
-% -summary_data: object containing all data 
+% -summary_data: object containing all data
 % for plotting
-% 
+%
 % -units, config, and folder: see CreateBatchPlots
-% 
+%
 % OUTPUT
 % plot_list: list of datatypes to plot
 
@@ -56,7 +56,7 @@ end
 if (size(summary_data{1}.WELLS.WLPT,1) > 1) ...
     && (size(summary_data{2}.WELLS.WLPT,1) > 1)
     nm = @() wlpt(3);
-    plot_list = { plot_list{:} nm };  
+    plot_list = { plot_list{:} nm };
 end
 
 if (size(summary_data{1}.WELLS.WOPT,1) > 1) ...
@@ -74,13 +74,13 @@ end
 if (size(summary_data{1}.WELLS.WBHP,1) > 1) ...
     && (size(summary_data{2}.WELLS.WBHP,1) > 1)
     nm = @() wbhp(4);
-    plot_list = { plot_list{:} nm };  
+    plot_list = { plot_list{:} nm };
 end
 
 if (size(summary_data{1}.WELLS.WWCT,1) > 1) ...
     && (size(summary_data{2}.WELLS.WWCT,1) > 1)
     nm = @() wwct(5);
-    plot_list = { plot_list{:} nm };  
+    plot_list = { plot_list{:} nm };
 end
 
 if (size(summary_data{1}.FIELD.FGPR,1) > 0) ...
@@ -117,13 +117,13 @@ if (size(summary_data{1}.FIELD.FLPT,1) > 0) ...
     plot_list = { plot_list{:} nm };
 end
 
-if (size(summary_data{1}.FIELD.FOPT,1) > 1) ...
+if (size(summary_data{1}.FIELD.FOPT,1) > 0) ...
     && (size(summary_data{2}.FIELD.FOPT,1) > 0)
     nm = @() fopt(7);
     plot_list = { plot_list{:} nm };
 end
 
-if (size(summary_data{1}.FIELD.FWPT,1) > 1) ...
+if (size(summary_data{1}.FIELD.FWPT,1) > 0) ...
     && (size(summary_data{2}.FIELD.FWPT,1) > 0)
     nm = @() fwpt(7);
     plot_list = { plot_list{:} nm };
@@ -155,7 +155,7 @@ end
 
         smry_data{1} = [summary_data{1}.FIELD.(datatype)];
         smry_data{2} = [summary_data{2}.FIELD.(datatype)];
-        pd.set_ydata(smry_data, {datatype}, {'gas'});        
+        pd.set_ydata(smry_data, {datatype}, {'gas'});
         pd.set_xdata(xdata);
         pd.set_config(config, datatype, smry_data);
         CreatePlot(pd, folder, index);
@@ -273,7 +273,7 @@ end
     function wgpr(index)
         datatype = 'WGPR';
         [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);  
+        get_data(summary_data, datatype);
 
         for i=well_indices{1}
             wellname = strcat('Well ', num2str(i));
@@ -293,25 +293,34 @@ end
         end
     end
 
+    % well_indices{1} =  2     3     4     5
+    % well_indices{2}
+    % welltype{1} = 'injector'    'producer'    'producer'    'producer'    'producer'
+    % welltype{2}
+
+    % well_indices.idx_num  = idx_num;
+    % well_indices.idx_inj  = idx_inj;
+    % well_indices.idx_prod = idx_prod;
+    % well_indices.wtype    = wtype;
+
     function wlpr(index)
         datatype = 'WLPR';
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);  
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
 
-        well_indices{1} = 1:size(ydata_all_wells{1},2);
-        for i=well_indices{1}
-            wellname = strcat('Well ', num2str(i));
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Liquid Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'liquid'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, data, well_indices{1});
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
@@ -319,22 +328,22 @@ end
 
     function wopr(index)
         datatype = 'WOPR';
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);  
-        
-        for i=well_indices{1}
-            wellname = strcat('Well ', num2str(i));
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
+
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Oil Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'oil'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, data, well_indices{1});
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
@@ -342,45 +351,45 @@ end
 
     function wwpr(index)
         datatype = 'WWPR';
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
 
-        for i=1:size(ydata_all_wells{1},2)
-            wellname = strcat('Well ', num2str(i));
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Water Production Rate, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'water'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, data, well_indices{1});
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
     end
 
     function wgpt(index)
-        datatype = 'WGPT';      
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);      
+        datatype = 'WGPT';
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
 
-        for i=well_indices{1}
-            wellname = strcat('Well ', num2str(i));
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Gas Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'gas'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, smry_data);
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
@@ -388,22 +397,22 @@ end
 
     function wlpt(index)
         datatype = 'WLPT';
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
 
-        for i=1:size(ydata_all_wells{1},2)
-            wellname = strcat('Well ', num2str(i));
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Liquid Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'liquid'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, data, well_indices{1});
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
@@ -411,22 +420,22 @@ end
 
     function wopt(index)
         datatype = 'WOPT';
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
 
-        for i=well_indices{1}
-            wellname = strcat('Well ', num2str(i));
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Oil Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'oil'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, data, well_indices{1});
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
@@ -434,22 +443,22 @@ end
 
     function wwpt(index)
         datatype = 'WWPT';
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
 
-        for i=1:size(ydata_all_wells{1},2)
-            wellname = strcat('Well ', num2str(i));
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Water Production Total, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'water'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, data, well_indices{1});
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
@@ -457,22 +466,22 @@ end
 
     function wbhp(index)
         datatype = 'WBHP';
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
 
-        for i=1:size(ydata_all_wells{1},2)
-            wellname = strcat('Well ', num2str(i));
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Well Bottom Hole Pressure, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'pressure'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, data, well_indices{1});
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
@@ -480,38 +489,41 @@ end
 
     function wwct(index)
         datatype = 'WWCT';
-        [well_indices, ydata_all_wells, welltype] = ...
-        get_data(summary_data, datatype);      
+        [well_indices, ydata_all_wells] = get_data(summary_data, datatype);
 
-        for i=well_indices{1}
-            wellname = strcat('Well ', num2str(i), ...
-                ' [', welltype{1}{i}, ']');
+        for iwell=well_indices.idx_num{1}
+            wellname = strcat('Well ', num2str(iwell), ...
+                ' [', well_indices.wtype{1}{iwell}, ']');
             pd = PlotData(strcat('Well Water Cut, ', wellname), units);
             pd.set_xlabel('TIME');
             pd.set_ylabel(datatype);
 
             for jj = 1 : size(ydata_all_wells, 2);
-                data{jj} = ydata_all_wells{jj}(:,i)';
+                data{jj} = ydata_all_wells{jj}(:,iwell)';
             end
 
             pd.set_ydata(data, {datatype}, {'water'},'well');
             pd.set_xdata(xdata);
-            pd.set_config(config, datatype, data, well_indices{1});
+            pd.set_config(config, datatype, ydata_all_wells, iwell, well_indices);
             CreatePlot(pd, folder, index);
             clear pd;
         end
     end
-    
+
     % Returns ydata for given datatype, and well_indices
-    % vector describing whether well is producer or injector    
+    % vector describing whether well is producer or injector
     function [well_indices, ydata_all_wells, welltype] = ...
             get_data(summary_data, datatype)
-        
+
+        well_indices = struct();
+
         % Select summary data from main structure
         ydata_all_wells = {};
         sz_ydata        = {};
-        well_indices    = {};
-        welltype        = {};
+        idx_num         = {};
+        idx_inj         = {};
+        idx_prod        = {};
+        wtype           = {};
 
         for jj = 1 : size(summary_data,2)
 
@@ -519,27 +531,35 @@ end
             sz_ydata{jj} = size(ydata_all_wells{jj});
 
             % Find index vector L for injectors(0), producers(1)
-            well_indices{jj} = 1 : sz_ydata{jj}(2);
+            idx_num{jj}  = 1 : sz_ydata{jj}(2);
+            idx_inj{jj}  = idx_num{jj};
+            idx_prod{jj} = idx_num{jj};
 
             if isfield(summary_data{jj}.WELLS, 'WIDX');
                 L = logical(summary_data{jj}.WELLS.WIDX);
             else
-                L = true(size(well_indices{jj}));
+                L = true(size(idx_num{jj}));
             end
 
-            well_indices{jj} = well_indices{jj}(L);
+            idx_prod{jj} = idx_num{jj}(L);
+            idx_inj{jj}  = idx_num{jj}(~L);
 
             % Store welltype
-            welltype{jj} = cell(1,sz_ydata{jj}(2));
+            wtype{jj} = cell(1,sz_ydata{jj}(2));
             for ii = 1 : size(L,2)
                 if L(ii)
-                    welltype{jj}{ii} = 'producer';
+                    wtype{jj}{ii} = 'producer';
                 else
-                    welltype{jj}{ii} = 'injector';
+                    wtype{jj}{ii} = 'injector';
                 end
             end
 
         end
+
+        well_indices.idx_num  = idx_num;
+        well_indices.idx_inj  = idx_inj;
+        well_indices.idx_prod = idx_prod;
+        well_indices.wtype    = wtype;
 
     end % end get_data function
 

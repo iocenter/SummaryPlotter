@@ -10,7 +10,8 @@ stime = tic;
 % i.e., summary_data_file = '', in which case a GUI will appear
 % and you can set the path to summary data file manually using
 % the GUI
-custom_data_path = 'P07-02-Case-Ia-5spot-default-mult';
+custom_data_path = 'P07-02-Case-Ia-5spot-default';
+% custom_data_path = 'P07-02-Case-Ia-5spot-default-mult';
 
 % Comment this:
 [summary_file_path, summary_name_path, folder_path, ...
