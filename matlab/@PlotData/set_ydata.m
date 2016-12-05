@@ -30,7 +30,7 @@ for jj = 1 : n_cols
 
     if ~iscell(smry_data)
 
-        data = smry_data';
+        data = smry_data;
 
     else
         
